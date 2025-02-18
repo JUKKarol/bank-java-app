@@ -9,9 +9,7 @@ public class MenuService {
         System.out.println("Welcome to the banking system!");
         System.out.println("1. Check account balance");
         System.out.println("2. Make a transfer");
-        System.out.println("3. Deposit funds");
-        System.out.println("4. Withdraw funds");
-        System.out.println("5. Exit");
+        System.out.println("3. Exit");
         System.out.print("Choose an option: ");
 
         int choice = scanner.nextInt();
@@ -24,12 +22,6 @@ public class MenuService {
                 System.out.println("Making a transfer...");
                 break;
             case 3:
-                System.out.println("Depositing funds...");
-                break;
-            case 4:
-                System.out.println("Withdrawing funds...");
-                break;
-            case 5:
                 System.out.println("Thank you for using our system!");
                 break;
             default:
