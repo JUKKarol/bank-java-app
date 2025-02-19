@@ -1,24 +1,16 @@
 package org.example.model;
 
 public class User {
-
-    private Long id;
     private String name;
     private String password;
     private int saldo;
     private String accountNumber;
-
-    public User() {}
 
     public User(String name, String password, int saldo, String accountNumber) {
         this.name = name;
         this.password = password;
         this.saldo = saldo;
         this.accountNumber = accountNumber;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getName() {
@@ -51,5 +43,14 @@ public class User {
 
     public void setAccountNumber(String accountNumber) {
         this.accountNumber = accountNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                ", saldo=" + saldo +
+                ", accountNumber='" + accountNumber + '\'' +
+                '}';
     }
 }
