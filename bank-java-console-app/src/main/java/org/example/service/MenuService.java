@@ -37,7 +37,7 @@ public class MenuService {
         }
     }
 
-    public static boolean login(ArrayList<User> users)
+    public static String login(ArrayList<User> users)
     {
         Scanner scanner = new Scanner(System.in);
 
@@ -51,12 +51,18 @@ public class MenuService {
 
         if(currentUser == null)
         {
-            return false;
+            return null;
         }
 
         System.out.print("Password: ");
         String password = scanner.nextLine();
 
-        return currentUser.getPassword().equals(password);
+        boolean isPasswordCorrect = currentUser.getPassword().equals(password);
+        if (isPasswordCorrect)
+        {
+            return currentUser.getAccountNumber();
+        }
+
+        return null;
     }
 }

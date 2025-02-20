@@ -12,7 +12,15 @@ public class Main {
         users.add(new User("user1", "password1", 1000, "1"));
         users.add(new User("user2", "password2", 1000, "2"));
 
-        boolean isLoginCorrect = login(users);
-        System.out.println(isLoginCorrect);
+        while (true)
+        {
+            String loggedUserAccountNumber = login(users);
+            System.out.println(loggedUserAccountNumber);
+
+            while(loggedUserAccountNumber != null)
+            {
+                System.out.println("elo");
+            }
+        }
     }
 }
