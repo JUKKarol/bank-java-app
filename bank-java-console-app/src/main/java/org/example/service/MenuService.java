@@ -7,14 +7,20 @@ import java.util.Scanner;
 
 public class MenuService {
     public static void invokeMenu(ArrayList<User> users) {
-        while (true) {
-            Scanner scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
 
+        while (true) {
             System.out.println("Welcome to the banking system!");
             System.out.println("1. Check account balance");
             System.out.println("2. Make a transfer");
             System.out.println("3. Exit");
             System.out.print("Choose an option: ");
+
+            if (!scanner.hasNextInt()) {
+                System.out.println("Invalid input! Please enter a number.");
+                scanner.next();
+                continue;
+            }
 
             int choice = scanner.nextInt();
 
@@ -27,18 +33,14 @@ public class MenuService {
                     break;
                 case 3:
                     System.out.println("Thank you for using our system!");
-                    break;
+                    return;
                 default:
                     System.out.println("Invalid choice, please try again.");
-                    invokeMenu(users);
             }
-
-            scanner.close();
         }
     }
 
-    public static String login(ArrayList<User> users)
-    {
+    public static String login(ArrayList<User> users) {
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("Login: ");
@@ -49,8 +51,7 @@ public class MenuService {
                 .findFirst()
                 .orElse(null);
 
-        if(currentUser == null)
-        {
+        if (currentUser == null) {
             return null;
         }
 
@@ -58,8 +59,7 @@ public class MenuService {
         String password = scanner.nextLine();
 
         boolean isPasswordCorrect = currentUser.getPassword().equals(password);
-        if (isPasswordCorrect)
-        {
+        if (isPasswordCorrect) {
             return currentUser.getAccountNumber();
         }
 
