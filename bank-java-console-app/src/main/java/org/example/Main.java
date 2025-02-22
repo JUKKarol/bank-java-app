@@ -20,7 +20,10 @@ public class Main {
 
             if (loggedUserAccountNumber != null)
             {
-                invokeMenu(users);
+                boolean exit = invokeMenu(users);
+                if (exit) {
+                    break;
+                }
             }
         }
     }

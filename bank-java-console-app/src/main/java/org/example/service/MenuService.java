@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class MenuService {
-    public static void invokeMenu(ArrayList<User> users) {
+    public static boolean invokeMenu(ArrayList<User> users) {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
@@ -33,7 +33,7 @@ public class MenuService {
                     break;
                 case 3:
                     System.out.println("Thank you for using our system!");
-                    return;
+                    return false;
                 default:
                     System.out.println("Invalid choice, please try again.");
             }
