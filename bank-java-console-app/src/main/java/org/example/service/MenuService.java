@@ -5,11 +5,15 @@ import org.example.model.User;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import static org.example.service.TransactionService.checkBalance;
+import static org.example.service.TransactionService.makeTransfer;
+
 public class MenuService {
-    public static boolean invokeMenu(ArrayList<User> users) {
+    public static boolean invokeMenu(ArrayList<User> users, String loggedUserAccountNumber) {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
+            System.out.println();
             System.out.println("Welcome to the banking system!");
             System.out.println("1. Check account balance");
             System.out.println("2. Make a transfer");
@@ -26,10 +30,14 @@ public class MenuService {
 
             switch (choice) {
                 case 1:
-                    System.out.println("Checking account balance...");
+                    System.out.println(checkBalance(users, loggedUserAccountNumber));
                     break;
                 case 2:
-                    System.out.println("Making a transfer...");
+                    System.out.println("Account number: ");
+                    String toAccountNumber = scanner.next();
+                    System.out.println("Amount: ");
+                    int amount = scanner.nextInt();
+                    makeTransfer(users, loggedUserAccountNumber, toAccountNumber, amount);
                     break;
                 case 3:
                     System.out.println("Thank you for using our system!");

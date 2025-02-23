@@ -20,7 +20,7 @@ public class Main {
 
             if (loggedUserAccountNumber != null)
             {
-                boolean exit = invokeMenu(users);
+                boolean exit = invokeMenu(users, loggedUserAccountNumber);
                 if (exit) {
                     break;
                 }
