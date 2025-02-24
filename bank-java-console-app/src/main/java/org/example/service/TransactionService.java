@@ -1,5 +1,6 @@
 package org.example.service;
 
+import org.example.dto.TransferResult;
 import org.example.model.User;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ public class TransactionService {
         return currentUser.getSaldo();
     }
 
-    public static boolean makeTransfer(ArrayList<User> users, String fromAccountNumber, String toAccountNumber, int amount) {
+    public static TransferResult makeTransfer(ArrayList<User> users, String fromAccountNumber, String toAccountNumber, int amount) {
         var fromtUser = users.stream()
                 .filter(user -> user.getAccountNumber().equals(fromAccountNumber))
                 .findFirst()
@@ -27,12 +28,12 @@ public class TransactionService {
 
         if (fromtUser.getSaldo() < amount)
         {
-            return false;
+            return new TransferResult(users, false);
         }
 
         fromtUser.setSaldo(fromtUser.getSaldo() - amount);
         toUser.setSaldo(toUser.getSaldo() + amount);
 
-        return true;
+        return new TransferResult(users, true);
     }
 }

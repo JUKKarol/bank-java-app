@@ -1,5 +1,6 @@
 package org.example.service;
 
+import org.example.dto.TransferResult;
 import org.example.model.User;
 
 import java.util.ArrayList;
@@ -37,7 +38,12 @@ public class MenuService {
                     String toAccountNumber = scanner.next();
                     System.out.println("Amount: ");
                     int amount = scanner.nextInt();
-                    makeTransfer(users, loggedUserAccountNumber, toAccountNumber, amount);
+                    TransferResult transferResult = makeTransfer(users, loggedUserAccountNumber, toAccountNumber, amount);
+                    users = transferResult.getUsers();
+                    if (transferResult.getIsSuccess())
+                    {
+                        System.out.println("Transfer completed for amount: " + amount);
+                    }
                     break;
                 case 3:
                     System.out.println("Thank you for using our system!");
