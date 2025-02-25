@@ -16,7 +16,7 @@ public class TransactionService {
     }
 
     public static TransferResult makeTransfer(ArrayList<User> users, String fromAccountNumber, String toAccountNumber, int amount) {
-        var fromtUser = users.stream()
+        var fromUser = users.stream()
                 .filter(user -> user.getAccountNumber().equals(fromAccountNumber))
                 .findFirst()
                 .orElse(null);
@@ -26,12 +26,12 @@ public class TransactionService {
                 .findFirst()
                 .orElse(null);
 
-        if (fromtUser.getSaldo() < amount)
+        if (fromUser.getSaldo() < amount)
         {
             return new TransferResult(users, false);
         }
 
-        fromtUser.setSaldo(fromtUser.getSaldo() - amount);
+        fromUser.setSaldo(fromUser.getSaldo() - amount);
         toUser.setSaldo(toUser.getSaldo() + amount);
 
         return new TransferResult(users, true);

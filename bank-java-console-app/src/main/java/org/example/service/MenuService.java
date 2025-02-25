@@ -40,7 +40,7 @@ public class MenuService {
                     int amount = scanner.nextInt();
                     TransferResult transferResult = makeTransfer(users, loggedUserAccountNumber, toAccountNumber, amount);
                     users = transferResult.getUsers();
-                    if (transferResult.getIsSuccess())
+                    if (transferResult.isSuccess())
                     {
                         System.out.println("Transfer completed for amount: " + amount);
                     }
