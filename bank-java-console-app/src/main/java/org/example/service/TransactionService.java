@@ -15,25 +15,31 @@ public class TransactionService {
         return currentUser.getSaldo();
     }
 
-    public static TransferResult makeTransfer(ArrayList<User> users, String fromAccountNumber, String toAccountNumber, int amount) {
-        var fromUser = users.stream()
+    public static TransferResult makeTransferBetweenUsers(ArrayList<User> users, String fromAccountNumber, String toAccountNumber, int amount) {
+        User fromUser = users.stream()
                 .filter(user -> user.getAccountNumber().equals(fromAccountNumber))
                 .findFirst()
                 .orElse(null);
 
-        var toUser = users.stream()
+        User toUser = users.stream()
                 .filter(user -> user.getAccountNumber().equals(toAccountNumber))
                 .findFirst()
                 .orElse(null);
 
-        if (fromUser.getSaldo() < amount)
-        {
+        if (fromUser == null || toUser == null) {
+            System.out.println("Błąd: Jedno z kont nie istnieje.");
+            return new TransferResult(users, false);
+        }
+
+        if (fromUser.getSaldo() < amount) {
+            System.out.println("Błąd: Brak wystarczających środków na koncie " + fromAccountNumber);
             return new TransferResult(users, false);
         }
 
         fromUser.setSaldo(fromUser.getSaldo() - amount);
         toUser.setSaldo(toUser.getSaldo() + amount);
+        System.out.println("Przelew zakończony sukcesem: " + amount + " z " + fromAccountNumber + " do " + toAccountNumber);
 
-        return new TransferResult(users, true);
+        return new TransferResult(users,true);
     }
 }

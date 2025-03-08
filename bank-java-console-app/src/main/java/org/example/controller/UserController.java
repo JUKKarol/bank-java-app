@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/{controllerName}")
 public class UserController {
     @PostMapping("/login")
     public String login(String accountNumber, String password) {
-        ArrayList<User> users = new ArrayList<>();
+        ArrayList<User> users = new ArrayList<User>();
         users.add(new User("user1", "1", 1000, "1"));
         users.add(new User("user2", "2", 1000, "2"));
         users.add(new User("user3", "3", 1000, "3"));
