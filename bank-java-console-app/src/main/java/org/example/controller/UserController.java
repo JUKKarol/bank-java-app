@@ -6,33 +6,28 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import static org.example.service.UserService.loginUser;
+import static org.example.service.UserService.getUserSaldo;
 
 @RestController
 @RequestMapping("/api/{controllerName}")
 public class UserController {
     @PostMapping("/login")
-    public String login(String accountNumber, String password) {
+    public ResponseEntity login(String accountNumber, String password) {
         ArrayList<User> users = new ArrayList<User>();
         users.add(new User("user1", "1", 1000, "1"));
         users.add(new User("user2", "2", 1000, "2"));
         users.add(new User("user3", "3", 1000, "3"));
         users.add(new User("user4", "4", 1000, "4"));
 
-        var currentUser = users.stream()
-                .filter(user -> user.getAccountNumber().equals(accountNumber))
-                .findFirst()
-                .orElse(null);
+        boolean isLogged = loginUser(users, accountNumber, password);
 
-        if (currentUser == null) {
-            return "incorrect login or password";
+        if (!isLogged)
+        {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+        return new ResponseEntity<>(HttpStatus.OK);
 
-        boolean isPasswordCorrect = currentUser.getPassword().equals(password);
-        if (isPasswordCorrect) {
-            return "Logged in";
-        }
-
-        return "incorrect login or password";
     }
 
     @GetMapping("/saldo/{accountNumber}")
@@ -43,16 +38,9 @@ public class UserController {
         users.add(new User("user3", "3", 1000, "3"));
         users.add(new User("user4", "4", 1000, "4"));
 
-        var currentUser = users.stream()
-                .filter(user -> user.getAccountNumber().equals(accountNumber))
-                .findFirst()
-                .orElse(null);
+        int userSaldo = getUserSaldo(users, accountNumber);
 
-        if (currentUser == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<>(currentUser.getSaldo(), HttpStatus.OK);
+        return new ResponseEntity<>(userSaldo, HttpStatus.OK);
     }
 }
 

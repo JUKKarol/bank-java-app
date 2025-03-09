@@ -1,12 +1,12 @@
 package org.example.controller;
 
+import org.example.dto.TransferResult;
 import org.example.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-
 import static org.example.service.TransactionService.makeTransferBetweenUsers;
 
 @RestController
@@ -20,9 +20,14 @@ public class TransactionController {
         users.add(new User("user3", "3", 1000, "3"));
         users.add(new User("user4", "4", 1000, "4"));
 
-        ArrayList<User> usersAfterTransfer = makeTransferBetweenUsers(users, fromAccountNumber, toAccountNumber, amount).getUsers();
+        TransferResult transferResult = makeTransferBetweenUsers(users, fromAccountNumber, toAccountNumber, amount);
 
-        return new ResponseEntity<>(usersAfterTransfer, HttpStatus.OK);
+        if(!transferResult.isSuccess())
+        {
+            return new ResponseEntity<>(transferResult.getUsers(), HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(transferResult.getUsers(), HttpStatus.OK);
     }
 }
 
