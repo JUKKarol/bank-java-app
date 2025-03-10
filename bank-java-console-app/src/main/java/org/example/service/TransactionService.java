@@ -2,11 +2,13 @@ package org.example.service;
 
 import org.example.dto.TransferResult;
 import org.example.model.User;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
+@Service
 public class TransactionService {
-    public static int checkBalance(ArrayList<User> users, String accountNumber) {
+    public int checkBalance(ArrayList<User> users, String accountNumber) {
         var currentUser = users.stream()
                 .filter(user -> user.getAccountNumber().equals(accountNumber))
                 .findFirst()
@@ -15,7 +17,7 @@ public class TransactionService {
         return currentUser.getSaldo();
     }
 
-    public static TransferResult makeTransferBetweenUsers(ArrayList<User> users, String fromAccountNumber, String toAccountNumber, int amount) {
+    public TransferResult makeTransferBetweenUsers(ArrayList<User> users, String fromAccountNumber, String toAccountNumber, int amount) {
         User fromUser = users.stream()
                 .filter(user -> user.getAccountNumber().equals(fromAccountNumber))
                 .findFirst()

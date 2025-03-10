@@ -1,34 +1,37 @@
 package org.example.service;
 
 import org.example.model.User;
+import org.example.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.List;
 
+@Service
 public class UserService {
-    public static int getUserSaldo(ArrayList<User> users, String accountNumber) {
-        var currentUser = users.stream()
-                .filter(user -> user.getAccountNumber().equals(accountNumber))
-                .findFirst()
-                .orElse(null);
+    private final UserRepository userRepository;
 
-        return currentUser.getSaldo();
+    @Autowired
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    public static boolean loginUser(ArrayList<User> users, String accountNumber, String password) {
-        var currentUser = users.stream()
+    public int getUserSaldo(List<User> users, String accountNumber) {
+        return users.stream()
                 .filter(user -> user.getAccountNumber().equals(accountNumber))
+                .map(User::getSaldo)
                 .findFirst()
-                .orElse(null);
+                .orElse(0); // ✅ Unikamy nullpointera
+    }
 
-        if (currentUser == null) {
-            return false;
-        }
+    public boolean loginUser(List<User> users, String accountNumber, String password) {
+        return users.stream()
+                .filter(user -> user.getAccountNumber().equals(accountNumber))
+                .anyMatch(user -> user.getPassword().equals(password));
+    }
 
-        boolean isPasswordCorrect = currentUser.getPassword().equals(password);
-        if (isPasswordCorrect) {
-            return true;
-        }
-
-        return false;
+    public User addUser(String name, String password, int saldo, String accountNumber) {
+        User user = new User(null, name, password, saldo, accountNumber);
+        return userRepository.save(user);
     }
 }
