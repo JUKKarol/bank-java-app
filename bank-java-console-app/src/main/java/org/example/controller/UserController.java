@@ -34,13 +34,7 @@ public class UserController {
 
     @GetMapping("/saldo/{accountNumber}")
     public ResponseEntity<Integer> getSaldo(@PathVariable String accountNumber) {
-        ArrayList<User> users = new ArrayList<>();
-        users.add(new User(1L, "user1", "1", 1000, "1"));
-        users.add(new User(2L, "user2", "2", 1000, "2"));
-        users.add(new User(3L, "user3", "3", 1000, "3"));
-        users.add(new User(4L, "user4", "4", 1000, "4"));
-
-        int userSaldo = userService.getUserSaldo(users, accountNumber);
+        int userSaldo = userService.getUserSaldo(accountNumber);
 
         return new ResponseEntity<>(userSaldo, HttpStatus.OK);
     }

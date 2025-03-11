@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -16,12 +17,11 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public int getUserSaldo(List<User> users, String accountNumber) {
-        return users.stream()
-                .filter(user -> user.getAccountNumber().equals(accountNumber))
-                .map(User::getSaldo)
-                .findFirst()
-                .orElse(0); // ✅ Unikamy nullpointera
+    public int getUserSaldo(String accountNumber) {
+        Optional<User> user = userRepository.findByAccountNumber(accountNumber);
+
+        return user.map(User::getSaldo).orElse(0);
+
     }
 
     public boolean loginUser(List<User> users, String accountNumber, String password) {
