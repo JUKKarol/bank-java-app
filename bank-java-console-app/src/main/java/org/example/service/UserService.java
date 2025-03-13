@@ -5,7 +5,6 @@ import org.example.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,10 +23,15 @@ public class UserService {
 
     }
 
-    public boolean loginUser(List<User> users, String accountNumber, String password) {
-        return users.stream()
-                .filter(user -> user.getAccountNumber().equals(accountNumber))
-                .anyMatch(user -> user.getPassword().equals(password));
+    public boolean loginUser(String accountNumber, String password) {
+        Optional<User> user = userRepository.findByAccountNumber(accountNumber);
+
+        if(user.isEmpty())
+        {
+            return false;
+        }
+
+        return user.get().getPassword().equals(password);
     }
 
     public User addUser(String name, String password, int saldo, String accountNumber) {

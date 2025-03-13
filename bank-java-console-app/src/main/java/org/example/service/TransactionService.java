@@ -2,46 +2,43 @@ package org.example.service;
 
 import org.example.dto.TransferResult;
 import org.example.model.User;
+import org.example.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Service
 public class TransactionService {
-    public int checkBalance(ArrayList<User> users, String accountNumber) {
-        var currentUser = users.stream()
-                .filter(user -> user.getAccountNumber().equals(accountNumber))
-                .findFirst()
-                .orElse(null);
+    private final UserRepository userRepository;
 
-        return currentUser.getSaldo();
+    @Autowired
+    public TransactionService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    public TransferResult makeTransferBetweenUsers(ArrayList<User> users, String fromAccountNumber, String toAccountNumber, int amount) {
-        User fromUser = users.stream()
-                .filter(user -> user.getAccountNumber().equals(fromAccountNumber))
-                .findFirst()
-                .orElse(null);
+    public boolean makeTransferBetweenUsers(String fromAccountNumber, String toAccountNumber, int amount) {
+        Optional<User> fromUserOptional = userRepository.findByAccountNumber(fromAccountNumber);
+        Optional<User> toUserOptional = userRepository.findByAccountNumber(toAccountNumber);
 
-        User toUser = users.stream()
-                .filter(user -> user.getAccountNumber().equals(toAccountNumber))
-                .findFirst()
-                .orElse(null);
-
-        if (fromUser == null || toUser == null) {
-            System.out.println("Błąd: Jedno z kont nie istnieje.");
-            return new TransferResult(users, false);
+        if (fromUserOptional.isEmpty() || toUserOptional.isEmpty()) {
+            return false;
         }
 
+        User fromUser = fromUserOptional.get();
+        User toUser = toUserOptional.get();
+
         if (fromUser.getSaldo() < amount) {
-            System.out.println("Błąd: Brak wystarczających środków na koncie " + fromAccountNumber);
-            return new TransferResult(users, false);
+            return false;
         }
 
         fromUser.setSaldo(fromUser.getSaldo() - amount);
         toUser.setSaldo(toUser.getSaldo() + amount);
-        System.out.println("Przelew zakończony sukcesem: " + amount + " z " + fromAccountNumber + " do " + toAccountNumber);
 
-        return new TransferResult(users,true);
+        userRepository.save(fromUser);
+        userRepository.save(toUser);
+
+        return true;
     }
 }
