@@ -16,26 +16,22 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public int getUserSaldo(String accountNumber) {
+    public int getUserBalance(String accountNumber) {
         Optional<User> user = userRepository.findByAccountNumber(accountNumber);
 
-        return user.map(User::getSaldo).orElse(0);
+        return user.map(User::getBalance).orElse(0);
 
     }
 
     public boolean loginUser(String accountNumber, String password) {
         Optional<User> user = userRepository.findByAccountNumber(accountNumber);
 
-        if(user.isEmpty())
-        {
-            return false;
-        }
+        return user.map(value -> value.getPassword().equals(password)).orElse(false);
 
-        return user.get().getPassword().equals(password);
     }
 
-    public User addUser(String name, String password, int saldo, String accountNumber) {
-        User user = new User(null, name, password, saldo, accountNumber);
+    public User addUser(String name, String password, int balance, String accountNumber) {
+        User user = new User(null, name, password, balance, accountNumber);
         return userRepository.save(user);
     }
 }

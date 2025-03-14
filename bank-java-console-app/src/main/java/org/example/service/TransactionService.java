@@ -1,12 +1,10 @@
 package org.example.service;
 
-import org.example.dto.TransferResult;
 import org.example.model.User;
 import org.example.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
@@ -29,12 +27,12 @@ public class TransactionService {
         User fromUser = fromUserOptional.get();
         User toUser = toUserOptional.get();
 
-        if (fromUser.getSaldo() < amount) {
+        if (fromUser.getBalance() < amount) {
             return false;
         }
 
-        fromUser.setSaldo(fromUser.getSaldo() - amount);
-        toUser.setSaldo(toUser.getSaldo() + amount);
+        fromUser.setBalance(fromUser.getBalance() - amount);
+        toUser.setBalance(toUser.getBalance() + amount);
 
         userRepository.save(fromUser);
         userRepository.save(toUser);

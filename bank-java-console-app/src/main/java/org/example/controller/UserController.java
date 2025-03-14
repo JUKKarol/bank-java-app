@@ -6,8 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-
 import org.example.service.UserService;
 
 @RestController
@@ -26,16 +24,16 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/saldo/{accountNumber}")
-    public ResponseEntity<Integer> getSaldo(@PathVariable String accountNumber) {
-        int userSaldo = userService.getUserSaldo(accountNumber);
+    @GetMapping("/balance/{accountNumber}")
+    public ResponseEntity<Integer> getBalance(@PathVariable String accountNumber) {
+        int userBalance = userService.getUserBalance(accountNumber);
 
-        return new ResponseEntity<>(userSaldo, HttpStatus.OK);
+        return new ResponseEntity<>(userBalance, HttpStatus.OK);
     }
 
     @PostMapping("/create")
-    public User create(String name, String password, int saldo, String accountNumber) {
-        return userService.addUser(name, password, saldo, accountNumber);
+    public User create(String name, String password, int balance, String accountNumber) {
+        return userService.addUser(name, password, balance, accountNumber);
     }
 }
 

@@ -19,15 +19,6 @@ public class User {
     private Long id;
     private String name;
     private String password;
-    private int saldo;
+    private int balance;
     private String accountNumber;
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "name='" + name + '\'' +
-                ", saldo=" + saldo +
-                ", accountNumber='" + accountNumber + '\'' +
-                '}';
-    }
 }
