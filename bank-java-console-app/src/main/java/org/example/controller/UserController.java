@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import org.example.dto.userDto.CreateUserRequest;
 import org.example.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,14 +27,14 @@ public class UserController {
 
     @GetMapping("/balance/{accountNumber}")
     public ResponseEntity<Integer> getBalance(@PathVariable String accountNumber) {
-        int userBalance = userService.getUserBalance(accountNumber);
+        Integer  userBalance = userService.getUserBalance(accountNumber);
 
         return new ResponseEntity<>(userBalance, HttpStatus.OK);
     }
 
     @PostMapping("/create")
-    public User create(String name, String password, int balance, String accountNumber) {
-        return userService.addUser(name, password, balance, accountNumber);
+    public User create(@RequestBody CreateUserRequest user) {
+        return userService.addUser(user);
     }
 }
 

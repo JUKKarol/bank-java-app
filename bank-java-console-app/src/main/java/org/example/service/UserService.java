@@ -1,5 +1,6 @@
 package org.example.service;
 
+import org.example.dto.userDto.CreateUserRequest;
 import org.example.model.User;
 import org.example.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public int getUserBalance(String accountNumber) {
+    public Integer getUserBalance(String accountNumber) {
         Optional<User> user = userRepository.findByAccountNumber(accountNumber);
 
         return user.map(User::getBalance).orElse(0);
@@ -30,8 +31,8 @@ public class UserService {
 
     }
 
-    public User addUser(String name, String password, int balance, String accountNumber) {
-        User user = new User(null, name, password, balance, accountNumber);
+    public User addUser(CreateUserRequest userDto) {
+        User user = new User(null, userDto.getName(), userDto.getPassword(), userDto.getBalance(), userDto.getAccountNumber());
         return userRepository.save(user);
     }
 }

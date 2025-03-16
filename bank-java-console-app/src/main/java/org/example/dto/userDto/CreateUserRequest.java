@@ -1,6 +1,5 @@
-package org.example.model;
+package org.example.dto.userDto;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,15 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-
-@Entity
-@Table(name = "users")
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class CreateUserRequest {
     private String name;
     private String password;
-    private Integer  balance;
+    private Integer balance;
     private String accountNumber;
 }
