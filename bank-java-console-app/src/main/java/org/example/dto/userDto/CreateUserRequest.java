@@ -1,5 +1,8 @@
 package org.example.dto.userDto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,8 +13,18 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateUserRequest {
+    @NotBlank
+    @Size(min = 4, max = 20)
     private String name;
+
+    @NotBlank
+    @Size(min = 8, max = 20)
     private String password;
+
     private Integer balance;
+
+    @NotBlank
+    @Size(min = 1, max = 20)
+    @Pattern(regexp = "\\d+")
     private String accountNumber;
 }

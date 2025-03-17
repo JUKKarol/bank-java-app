@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import jakarta.validation.Valid;
 import org.example.dto.userDto.CreateUserRequest;
 import org.example.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public User create(@RequestBody CreateUserRequest user) {
+    public User create(@RequestBody @Valid CreateUserRequest user) {
         return userService.addUser(user);
     }
 }
