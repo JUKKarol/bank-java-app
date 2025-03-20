@@ -31,7 +31,7 @@ public class UserService {
     }
 
     public User addUser(CreateUserRequest userDto) {
-        User user = new User(null, userDto.getName(), userDto.getPassword(), userDto.getBalance(), userDto.getAccountNumber());
+        User user = new User(null, userDto.getName(), userDto.getEmail(), userDto.getPassword(), userDto.getBalance(), userDto.getAccountNumber(), null, null);
         return userRepository.save(user);
     }
 }
