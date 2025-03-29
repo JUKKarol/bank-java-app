@@ -30,6 +30,9 @@ public class AuthenticationService {
         user.setName(input.getName());
         user.setEmail(input.getEmail());
         user.setPassword(passwordEncoder.encode(input.getPassword()));
+        user.setBalance(1000);
+        String accountNumber = String.format("%010d", (int)(Math.random() * 10000000000L));
+        user.setAccountNumber(accountNumber);
 
         return userRepository.save(user);
     }
