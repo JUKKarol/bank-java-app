@@ -28,5 +28,12 @@ public class TransactionController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @GetMapping("/balance/{accountNumber}")
+    public ResponseEntity<Integer> getBalance(@PathVariable String accountNumber) {
+        Integer  userBalance = userService.getUserBalance(accountNumber);
+
+        return new ResponseEntity<>(userBalance, HttpStatus.OK);
+    }
 }
 
