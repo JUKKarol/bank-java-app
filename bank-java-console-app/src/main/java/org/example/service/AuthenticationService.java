@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Random;
+
 @Service
 public class AuthenticationService {
     @Autowired
@@ -21,12 +23,14 @@ public class AuthenticationService {
     private AuthenticationManager authenticationManager;
 
     public User signup(RegisterUserDto input) {
+        Random generator = new Random();
+
         User user = new User();
         user.setName(input.getName());
         user.setEmail(input.getEmail());
         user.setPassword(passwordEncoder.encode(input.getPassword()));
         user.setBalance(1000);
-        String accountNumber = String.format("%010d", (int)(Math.random() * 10000000000L));
+        String accountNumber = String.format("%010d", generator.nextLong(1_000_000_0000L));
         user.setAccountNumber(accountNumber);
 
         return userRepository.save(user);
