@@ -1,9 +1,9 @@
 package org.example.controller;
 
 import org.example.dto.userDto.MakeTransferResponse;
+import org.example.repository.UserRepository;
 import org.example.service.TransactionService;
 import org.example.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,10 +11,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/{controllerName}")
 public class TransactionController {
-    @Autowired
-    private TransactionService transactionService;
-    @Autowired
-    private UserService userService;
+    private final TransactionService transactionService;
+    private final UserService userService;
+
+    public TransactionController(TransactionService transactionService, UserService userService) {
+        this.transactionService = transactionService;
+        this.userService = userService;
+    }
 
     @PostMapping("/makeTransfer")
     public ResponseEntity<MakeTransferResponse> makeTransfer(String fromAccountNumber, String toAccountNumber, int amount) {

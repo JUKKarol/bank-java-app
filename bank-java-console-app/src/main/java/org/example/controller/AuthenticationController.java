@@ -6,18 +6,21 @@ import org.example.dto.userDto.RegisterUserDto;
 import org.example.model.User;
 import org.example.service.AuthenticationService;
 import org.example.service.JwtService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("api/auth")
 @RestController
 public class AuthenticationController {
-    @Autowired
-    private JwtService jwtService;
-    @Autowired
-    private AuthenticationService authenticationService;
+    private final JwtService jwtService;
+    private final AuthenticationService authenticationService;
+
+    public AuthenticationController(JwtService jwtService, AuthenticationService authenticationService, UserDetailsService userDetailsService) {
+        this.jwtService = jwtService;
+        this.authenticationService = authenticationService;
+    }
 
     @PostMapping("/signup")
     public ResponseEntity<User> register(@RequestBody RegisterUserDto registerUserDto) {
