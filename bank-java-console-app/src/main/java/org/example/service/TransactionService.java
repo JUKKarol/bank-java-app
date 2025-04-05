@@ -1,18 +1,16 @@
 package org.example.service;
 
+import lombok.AllArgsConstructor;
 import org.example.model.User;
 import org.example.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@AllArgsConstructor
 @Service
 public class TransactionService {
     private final UserRepository userRepository;
-
-    public TransactionService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     public boolean makeTransferBetweenUsers(String fromAccountNumber, String toAccountNumber, int amount) {
         Optional<User> fromUserOptional = userRepository.findByAccountNumber(fromAccountNumber);

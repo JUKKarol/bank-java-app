@@ -1,5 +1,6 @@
 package org.example.service;
 
+import lombok.AllArgsConstructor;
 import org.example.dto.userDto.LoginUserDto;
 import org.example.dto.userDto.RegisterUserDto;
 import org.example.model.User;
@@ -12,17 +13,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
+@AllArgsConstructor
 @Service
 public class AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-
-    public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
-    }
 
     public User signup(RegisterUserDto input) {
         Random generator = new Random();

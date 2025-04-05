@@ -1,5 +1,6 @@
 package org.example.service;
 
+import lombok.AllArgsConstructor;
 import org.example.dto.userDto.CreateUserRequest;
 import org.example.model.User;
 import org.example.repository.UserRepository;
@@ -7,13 +8,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@AllArgsConstructor
 @Service
 public class UserService {
     private final UserRepository userRepository;
-
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     public Integer getUserBalance(String accountNumber) {
         Optional<User> user = userRepository.findByAccountNumber(accountNumber);

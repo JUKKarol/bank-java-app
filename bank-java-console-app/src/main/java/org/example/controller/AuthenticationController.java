@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import lombok.AllArgsConstructor;
 import org.example.dto.userDto.LoginResponse;
 import org.example.dto.userDto.LoginUserDto;
 import org.example.dto.userDto.RegisterUserDto;
@@ -8,19 +9,14 @@ import org.example.service.AuthenticationService;
 import org.example.service.JwtService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
+@AllArgsConstructor
 @RequestMapping("api/auth")
 @RestController
 public class AuthenticationController {
     private final JwtService jwtService;
     private final AuthenticationService authenticationService;
-
-    public AuthenticationController(JwtService jwtService, AuthenticationService authenticationService, UserDetailsService userDetailsService) {
-        this.jwtService = jwtService;
-        this.authenticationService = authenticationService;
-    }
 
     @PostMapping("/signup")
     public ResponseEntity<User> register(@RequestBody RegisterUserDto registerUserDto) {
