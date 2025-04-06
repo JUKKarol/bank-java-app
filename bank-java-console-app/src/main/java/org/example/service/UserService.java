@@ -1,7 +1,7 @@
 package org.example.service;
 
 import lombok.AllArgsConstructor;
-import org.example.dto.userDto.CreateUserRequest;
+import org.example.dto.userDto.CreateUserDto;
 import org.example.model.User;
 import org.example.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ public class UserService {
         return user.map(value -> value.getPassword().equals(password)).orElse(false);
     }
 
-    public User addUser(CreateUserRequest userDto) {
+    public User addUser(CreateUserDto userDto) {
         User user = new User(null, userDto.getName(), userDto.getEmail(), userDto.getPassword(), userDto.getBalance(), userDto.getAccountNumber(), null, null);
         return userRepository.save(user);
     }

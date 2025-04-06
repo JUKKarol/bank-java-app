@@ -2,8 +2,9 @@ package org.example.controller;
 
 import lombok.AllArgsConstructor;
 import org.example.dto.userDto.LoginResponse;
-import org.example.dto.userDto.LoginUserDto;
-import org.example.dto.userDto.RegisterUserDto;
+import org.example.dto.userDto.LoginUserRequest;
+import org.example.dto.userDto.RegisterUserRequest;
+import org.example.dto.userDto.RegisterUserResponse;
 import org.example.model.User;
 import org.example.service.AuthenticationService;
 import org.example.service.JwtService;
@@ -19,15 +20,15 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/signup")
-    public ResponseEntity<User> register(@RequestBody RegisterUserDto registerUserDto) {
-        User registeredUser = authenticationService.signup(registerUserDto);
+    public ResponseEntity<RegisterUserResponse> register(@RequestBody RegisterUserRequest registerUserRequest) {
+        RegisterUserResponse registeredUser = authenticationService.signup(registerUserRequest);
 
         return ResponseEntity.ok(registeredUser);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDto loginUserDto) {
-        UserDetails authenticatedUser = authenticationService.authenticate(loginUserDto);
+    public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserRequest loginUserRequest) {
+        UserDetails authenticatedUser = authenticationService.authenticate(loginUserRequest);
 
         String jwtToken = jwtService.generateToken((UserDetails) authenticatedUser);
 

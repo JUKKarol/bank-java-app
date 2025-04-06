@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateUserRequest {
+public class CreateUserDto {
     @NotBlank
     @Size(min = 4, max = 20)
     private String name;

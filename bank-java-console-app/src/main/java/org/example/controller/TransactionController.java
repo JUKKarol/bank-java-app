@@ -1,7 +1,7 @@
 package org.example.controller;
 
 import lombok.AllArgsConstructor;
-import org.example.dto.userDto.MakeTransferResponse;
+import org.example.dto.transactionDto.MakeTransferResponse;
 import org.example.service.TransactionService;
 import org.example.service.UserService;
 import org.springframework.http.HttpStatus;
