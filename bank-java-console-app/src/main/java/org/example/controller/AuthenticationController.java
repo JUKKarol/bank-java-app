@@ -5,7 +5,6 @@ import org.example.dto.userDto.LoginResponse;
 import org.example.dto.userDto.LoginUserRequest;
 import org.example.dto.userDto.RegisterUserRequest;
 import org.example.dto.userDto.RegisterUserResponse;
-import org.example.model.User;
 import org.example.service.AuthenticationService;
 import org.example.service.JwtService;
 import org.springframework.http.ResponseEntity;
