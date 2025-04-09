@@ -35,4 +35,11 @@ public class TransactionService {
 
         return true;
     }
+
+    public Integer getUserBalance(String accountNumber) {
+        Optional<User> user = userRepository.findByAccountNumber(accountNumber);
+
+        return user.map(User::getBalance).orElse(0);
+
+    }
 }

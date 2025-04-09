@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/transaction")
 public class TransactionController {
     private final TransactionService transactionService;
-    private final UserService userService;
 
     @PostMapping("/makeTransfer")
     public ResponseEntity<MakeTransferResponse> makeTransfer(String fromAccountNumber, String toAccountNumber, int amount) {
@@ -23,14 +22,14 @@ public class TransactionController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        MakeTransferResponse response = new MakeTransferResponse(userService.getUserBalance(fromAccountNumber));
+        MakeTransferResponse response = new MakeTransferResponse(transactionService.getUserBalance(fromAccountNumber));
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/balance/{accountNumber}")
     public ResponseEntity<Integer> getBalance(@PathVariable String accountNumber) {
-        Integer  userBalance = userService.getUserBalance(accountNumber);
+        Integer  userBalance = transactionService.getUserBalance(accountNumber);
 
         return new ResponseEntity<>(userBalance, HttpStatus.OK);
     }
