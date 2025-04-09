@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/{controllerName}")
+@RequestMapping("/api/transaction")
 public class TransactionController {
     private final TransactionService transactionService;
     private final UserService userService;
