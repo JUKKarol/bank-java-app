@@ -8,6 +8,7 @@ import org.example.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -19,5 +20,11 @@ public class UserService {
         List<User> users = userRepository.findAll();
 
         return userMapper.usersToDisplayUserDtos(users);
+    }
+
+    public DisplayUserDto findUserById(Long id) {
+        Optional<User> user = userRepository.findById(id);
+
+        return userMapper.userToDisplayUserDto(user.orElse(null));
     }
 }
