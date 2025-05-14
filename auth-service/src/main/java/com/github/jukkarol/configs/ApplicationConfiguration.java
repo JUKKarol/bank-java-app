@@ -1,5 +1,6 @@
 package com.github.jukkarol.configs;
 
+import com.github.jukkarol.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
