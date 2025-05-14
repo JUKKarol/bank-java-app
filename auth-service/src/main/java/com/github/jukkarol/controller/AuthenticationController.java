@@ -1,5 +1,11 @@
 package com.github.jukkarol.controller;
 
+import com.github.jukkarol.dto.userDto.request.LoginUserRequest;
+import com.github.jukkarol.dto.userDto.request.RegisterUserRequest;
+import com.github.jukkarol.dto.userDto.response.LoginResponse;
+import com.github.jukkarol.dto.userDto.response.RegisterUserResponse;
+import com.github.jukkarol.service.AuthenticationService;
+import com.github.jukkarol.service.JwtService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
