@@ -24,11 +24,4 @@ public class CreateUserDto {
     @NotBlank
     @Size(min = 8, max = 20)
     private String password;
-
-    private Integer balance;
-
-    @NotBlank
-    @Size(min = 1, max = 20)
-    @Pattern(regexp = "\\d+")
-    private String accountNumber;
 }

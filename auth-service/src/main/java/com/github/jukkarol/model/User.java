@@ -36,12 +36,6 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    private Integer  balance;
-
-    @Column(unique = true, nullable = false)
-    private String accountNumber;
-
     @CreationTimestamp
     @Column(updatable = false, name = "created_at")
     private Date createdAt;

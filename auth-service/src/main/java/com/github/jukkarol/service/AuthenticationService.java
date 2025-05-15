@@ -28,9 +28,6 @@ public class AuthenticationService {
         user.setName(input.getName());
         user.setEmail(input.getEmail());
         user.setPassword(passwordEncoder.encode(input.getPassword()));
-        user.setBalance(1000);
-        String accountNumber = String.format("%010d", generator.nextLong(1_000_000_0000L));
-        user.setAccountNumber(accountNumber);
 
         User createdUser =  userRepository.save(user);
 
@@ -38,9 +35,6 @@ public class AuthenticationService {
         userResponse.setId(createdUser.getId());
         userResponse.setName(createdUser.getName());
         userResponse.setEmail(createdUser.getEmail());
-        userResponse.setBalance(createdUser.getBalance());
-        userResponse.setAccountNumber(createdUser.getAccountNumber());
-        userResponse.setAccountNumber(createdUser.getAccountNumber());
         userResponse.setCreatedAt(createdUser.getCreatedAt());
         userResponse.setUpdatedAt(createdUser.getUpdatedAt());
 

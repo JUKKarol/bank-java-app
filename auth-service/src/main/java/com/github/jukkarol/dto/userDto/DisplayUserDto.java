@@ -18,10 +18,6 @@ public class DisplayUserDto {
 
     private String email;
 
-    private Integer  balance;
-
-    private String accountNumber;
-
     private Date createdAt;
 
     private Date updatedAt;
