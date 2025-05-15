@@ -4,11 +4,7 @@ target/
 !**/src/test/**/target/
 
 ### IntelliJ IDEA ###
-/.idea/
-/*.iml
-*.iws
-*.iml
-*.ipr
+.idea/
 
 ### Eclipse ###
 .apt_generated
