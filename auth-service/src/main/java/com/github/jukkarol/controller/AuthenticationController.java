@@ -4,6 +4,7 @@ import com.github.jukkarol.dto.userDto.request.LoginUserRequest;
 import com.github.jukkarol.dto.userDto.request.RegisterUserRequest;
 import com.github.jukkarol.dto.userDto.response.LoginResponse;
 import com.github.jukkarol.dto.userDto.response.RegisterUserResponse;
+import com.github.jukkarol.model.User;
 import com.github.jukkarol.service.AuthenticationService;
 import com.github.jukkarol.service.JwtService;
 import lombok.AllArgsConstructor;
@@ -30,9 +31,9 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserRequest loginUserRequest) {
-        UserDetails authenticatedUser = authenticationService.authenticate(loginUserRequest);
+        User authenticatedUser = authenticationService.authenticate(loginUserRequest);
 
-        String jwtToken = jwtService.generateToken((UserDetails) authenticatedUser);
+        String jwtToken = jwtService.generateToken(authenticatedUser);
         long jwtExpirationTime = jwtService.getExpirationTime();
 
         LoginResponse loginResponse = new LoginResponse(jwtToken, jwtExpirationTime);

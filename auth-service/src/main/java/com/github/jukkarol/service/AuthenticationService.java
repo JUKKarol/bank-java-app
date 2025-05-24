@@ -41,7 +41,7 @@ public class AuthenticationService {
         return userResponse;
     }
 
-    public UserDetails authenticate(LoginUserRequest input) {
+    public User authenticate(LoginUserRequest input) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         input.getEmail(),
