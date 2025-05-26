@@ -1,8 +1,8 @@
 package com.github.jukkarol.controller;
 
+import com.github.jukkarol.configs.JwtAuthenticationToken;
 import com.github.jukkarol.dto.accountDto.request.CreateAccountRequest;
 import com.github.jukkarol.dto.accountDto.response.CreateAccountResponse;
-import com.github.jukkarol.models.User;
 import com.github.jukkarol.service.AccountService;
 import com.github.jukkarol.service.JwtService;
 import lombok.AllArgsConstructor;
@@ -25,6 +25,11 @@ public class AccountController {
     public ResponseEntity<CreateAccountResponse> createAccount() {
         CreateAccountRequest request = new CreateAccountRequest();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication instanceof JwtAuthenticationToken jwtAuth) {
+            Long userId = jwtAuth.getUserId();
+            request.setUser_id(userId);
+        }
 
         return new ResponseEntity<>(accountService.createAccount(request), HttpStatus.OK);
     }

@@ -6,7 +6,7 @@
 
     <groupId>com.github.jukkarol</groupId>
     <artifactId>auth-lib</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <packaging>jar</packaging>
     <name>auth-lib</name>
     <description>Shared JWT authentication logic for microservices</description>
