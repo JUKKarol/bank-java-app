@@ -30,6 +30,7 @@ public class AccountController {
             Long userId = jwtAuth.getUserId();
             request.setUser_id(userId);
         }
+        //throw error if else
 
         return new ResponseEntity<>(accountService.createAccount(request), HttpStatus.OK);
     }
