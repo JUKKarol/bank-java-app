@@ -1,4 +1,4 @@
-package com.github.jukkarol.dto.accountDto.response;
+package com.github.jukkarol.dto.accountDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +9,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MakeTransferResponse {
+public class AccountDisplayDto {
+    private String accountNumber;
+
     private Integer  balance;
 }
