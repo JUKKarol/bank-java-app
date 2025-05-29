@@ -25,6 +25,6 @@ public class Account {
     @Column(unique = true, nullable = false)
     private String accountNumber;
 
-    @Column(nullable = false)
-    private Long user_id;
+    @Column(nullable = false, name = "user_id")
+    private Long userId;
 }

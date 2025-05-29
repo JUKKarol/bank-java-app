@@ -2,12 +2,15 @@ package com.github.jukkarol.controller;
 
 import com.github.jukkarol.configs.JwtAuthenticationToken;
 import com.github.jukkarol.dto.accountDto.request.CreateAccountRequest;
+import com.github.jukkarol.dto.accountDto.request.GetMyAccountsRequest;
 import com.github.jukkarol.dto.accountDto.response.CreateAccountResponse;
+import com.github.jukkarol.dto.accountDto.response.GetMyAccountsResponse;
 import com.github.jukkarol.service.AccountService;
 import com.github.jukkarol.service.JwtService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,8 +33,20 @@ public class AccountController {
             Long userId = jwtAuth.getUserId();
             request.setUser_id(userId);
         }
-        //throw error if else
 
         return new ResponseEntity<>(accountService.createAccount(request), HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<GetMyAccountsResponse> getMyAccounts() {
+        GetMyAccountsRequest request = new GetMyAccountsRequest();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication instanceof JwtAuthenticationToken jwtAuth) {
+            Long userId = jwtAuth.getUserId();
+            request.setUser_id(userId);
+        }
+
+        return new ResponseEntity<>(accountService.getAccountsByUserId(request), HttpStatus.OK);
     }
 }

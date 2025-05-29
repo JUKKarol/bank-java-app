@@ -1,13 +1,18 @@
 package com.github.jukkarol.service;
 
+import com.github.jukkarol.dto.accountDto.AccountDisplayDto;
 import com.github.jukkarol.dto.accountDto.request.CreateAccountRequest;
+import com.github.jukkarol.dto.accountDto.request.GetMyAccountsRequest;
 import com.github.jukkarol.dto.accountDto.response.CreateAccountResponse;
+import com.github.jukkarol.dto.accountDto.response.GetMyAccountsResponse;
 import com.github.jukkarol.mapper.AccountMapper;
 import com.github.jukkarol.model.Account;
 import com.github.jukkarol.repository.AccountRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @AllArgsConstructor
@@ -21,7 +26,7 @@ public class AccountService {
         Random generator = new Random();
 
         Account account = new Account();
-        account.setUser_id(request.getUser_id());
+        account.setUserId(request.getUser_id());
         account.setBalance(1000);
         String accountNumber = String.format("%010d", generator.nextLong(1_000_000_0000L));
         account.setAccountNumber(accountNumber);
@@ -29,5 +34,17 @@ public class AccountService {
         Account createdAccount = accountRepository.save(account);
 
         return accountMapper.accountToCreateAccountResponse(createdAccount);
+    }
+
+    public GetMyAccountsResponse getAccountsByUserId(GetMyAccountsRequest request) {
+        GetMyAccountsResponse response = new GetMyAccountsResponse();
+
+        List<Account> accounts= accountRepository.findAllByUserId(request.getUser_id());
+
+        List<AccountDisplayDto> accountDtos = accountMapper.accountsToAccountDisplayDtos(accounts);
+
+        response.setAccounts(accountDtos);
+
+        return response;
     }
 }
