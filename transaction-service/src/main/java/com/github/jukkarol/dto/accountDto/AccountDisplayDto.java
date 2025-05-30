@@ -12,5 +12,5 @@ import lombok.Setter;
 public class AccountDisplayDto {
     private String accountNumber;
 
-    private Integer  balance;
+    private Integer balance;
 }
