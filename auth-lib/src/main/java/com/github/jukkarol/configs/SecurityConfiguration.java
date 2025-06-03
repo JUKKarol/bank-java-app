@@ -34,11 +34,11 @@ public class SecurityConfiguration {
                     auth.requestMatchers("/api/auth/**").permitAll();
 
                     if (activeProfile.equals("dev") ) {
-                        auth.requestMatchers(
-                                "/v3/api-docs/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html"
-                        ).permitAll();
+                        auth.requestMatchers("/swagger-ui/**").permitAll()
+                                .requestMatchers("/swagger-ui.html").permitAll()
+                                .requestMatchers("/v3/api-docs/**").permitAll()
+                                .requestMatchers("/swagger-resources/**").permitAll()
+                                .requestMatchers("/webjars/**").permitAll();
                     }
 
                     auth.anyRequest().authenticated();
