@@ -19,9 +19,6 @@ import java.util.List;
 public class SecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    @Value("${spring.profiles.active:prod}")
-    private String activeProfile;
-
     public SecurityConfiguration(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
@@ -33,13 +30,11 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/api/auth/**").permitAll();
 
-                    if (activeProfile.equals("dev") ) {
                         auth.requestMatchers("/swagger-ui/**").permitAll()
                                 .requestMatchers("/swagger-ui.html").permitAll()
                                 .requestMatchers("/v3/api-docs/**").permitAll()
                                 .requestMatchers("/swagger-resources/**").permitAll()
                                 .requestMatchers("/webjars/**").permitAll();
-                    }
 
                     auth.anyRequest().authenticated();
                 })

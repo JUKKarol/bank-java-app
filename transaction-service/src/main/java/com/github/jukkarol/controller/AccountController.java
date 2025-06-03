@@ -7,6 +7,12 @@ import com.github.jukkarol.dto.accountDto.response.CreateAccountResponse;
 import com.github.jukkarol.dto.accountDto.response.GetMyAccountsResponse;
 import com.github.jukkarol.service.AccountService;
 import com.github.jukkarol.service.JwtService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +26,26 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/account")
+@Tag(name = "Authentication", description = "Authentication endpoints for basic user operations")
 public class AccountController {
     private final AccountService accountService;
     private final JwtService jwtService;
 
     @PostMapping
+    @Operation(
+            summary = "Create account",
+            description = "Creates a new bank account for logged user"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Account created successfully",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CreateAccountResponse.class)
+                    )
+            ),
+    })
     public ResponseEntity<CreateAccountResponse> createAccount() {
         CreateAccountRequest request = new CreateAccountRequest();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -38,6 +59,20 @@ public class AccountController {
     }
 
     @GetMapping
+    @Operation(
+            summary = "Get all accounts",
+            description = "Get all accounts for logged user"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Returns all logged user accounts",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = GetMyAccountsResponse.class)
+                    )
+            ),
+    })
     public ResponseEntity<GetMyAccountsResponse> getMyAccounts() {
         GetMyAccountsRequest request = new GetMyAccountsRequest();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

@@ -35,7 +35,6 @@ public class SecurityConfiguration {
                         .requestMatchers("/swagger-resources/**").permitAll()
                         .requestMatchers("/webjars/**").permitAll()
 
-
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
