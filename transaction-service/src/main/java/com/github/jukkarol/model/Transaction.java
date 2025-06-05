@@ -16,21 +16,21 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 
 @Entity
-@Table(name = "accounts")
-public class Account {
+@Table(name = "transactions")
+public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
 
     @Column(nullable = false)
-    private Integer balance;
+    private Integer amount;
 
-    @Column(unique = true, nullable = false)
-    private String accountNumber;
+    @Column(nullable = false, name = "from_account_number")
+    private String fromAccountNumber;
 
-    @Column(nullable = false, name = "user_id")
-    private Long userId;
+    @Column(nullable = false, name = "to_account_number")
+    private String toAccountNumber;
 
     @Column(updatable = false, name = "created_at")
     @CreationTimestamp
