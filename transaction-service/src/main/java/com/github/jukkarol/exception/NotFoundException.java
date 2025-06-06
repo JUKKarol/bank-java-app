@@ -12,5 +12,4 @@ public class NotFoundException extends RuntimeException {
         this.resource = resource;
         this.id = id;
     }
-
 }

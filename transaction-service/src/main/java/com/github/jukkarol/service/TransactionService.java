@@ -4,6 +4,7 @@ import com.github.jukkarol.dto.transactionDto.request.MakeTransferRequest;
 import com.github.jukkarol.dto.transactionDto.response.MakeTransferResponse;
 import com.github.jukkarol.exception.InsufficientFundsException;
 import com.github.jukkarol.exception.NotFoundException;
+import com.github.jukkarol.exception.PermissionDeniedException;
 import com.github.jukkarol.model.Account;
 import com.github.jukkarol.repository.AccountRepository;
 import com.github.jukkarol.repository.TransactionRepository;
@@ -19,11 +20,17 @@ public class TransactionService {
     public MakeTransferResponse makeTransfer(MakeTransferRequest request)
     {
         Account fromAccount = accountRepository.findByAccountNumber(request.getFromAccountNumber());
-        Account toAccount = accountRepository.findByAccountNumber(request.getToAccountNumber());
 
         if (fromAccount == null) {
             throw new NotFoundException(Account.class.getSimpleName(), request.getFromAccountNumber());
         }
+
+        if (!request.getUserId().equals(fromAccount.getUserId()))
+        {
+            throw new PermissionDeniedException();
+        }
+
+        Account toAccount = accountRepository.findByAccountNumber(request.getToAccountNumber());
 
         if (toAccount == null) {
             throw new NotFoundException(Account.class.getSimpleName(), request.getToAccountNumber());
