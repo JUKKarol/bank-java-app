@@ -4,7 +4,6 @@ import com.github.jukkarol.dto.accountDto.AccountDisplayDto;
 import com.github.jukkarol.dto.accountDto.response.CreateAccountResponse;
 import com.github.jukkarol.model.Account;
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
