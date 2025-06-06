@@ -1,9 +1,14 @@
 package com.github.jukkarol.controller;
 
 import com.github.jukkarol.configs.JwtAuthenticationToken;
-import com.github.jukkarol.dto.transactionDto.request.MakeTransferRequest;
-import com.github.jukkarol.dto.transactionDto.response.MakeTransferResponse;
+import com.github.jukkarol.dto.transactionDto.request.MakeTransactionRequest;
+import com.github.jukkarol.dto.transactionDto.response.MakeTransactionResponse;
 import com.github.jukkarol.service.TransactionService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +23,42 @@ public class TransactionController {
     private final TransactionService transactionService;
 
     @PostMapping("/makeTransfer")
-    public ResponseEntity<MakeTransferResponse> makeTransfer(@RequestBody MakeTransferRequest request) {
+    @Operation(
+            summary = "Make transfer",
+            description = "Make transfer from account to account"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Transfer done successfully",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = MakeTransactionResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Not enough founds",
+                    content = @Content(
+                            mediaType = "application/json"
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Permission denied",
+                    content = @Content(
+                            mediaType = "application/json"
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Account not found",
+                    content = @Content(
+                            mediaType = "application/json"
+                    )
+            ),
+    })
+    public ResponseEntity<MakeTransactionResponse> makeTransfer(@RequestBody MakeTransactionRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication instanceof JwtAuthenticationToken jwtAuth) {
@@ -26,15 +66,8 @@ public class TransactionController {
             request.setUserId(userId);
         }
 
-        MakeTransferResponse response = transactionService.makeTransfer(request);
+        MakeTransactionResponse response = transactionService.makeTransfer(request);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-//    @GetMapping("/balance/{accountNumber}")
-//    public ResponseEntity<Integer> getBalance(@PathVariable String accountNumber) {
-//        Integer  userBalance = transactionService.getUserBalance(accountNumber);
-//
-//        return new ResponseEntity<>(userBalance, HttpStatus.OK);
-//    }
 }

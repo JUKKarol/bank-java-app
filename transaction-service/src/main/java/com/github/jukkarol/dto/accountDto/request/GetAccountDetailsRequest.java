@@ -1,4 +1,4 @@
-package com.github.jukkarol.dto.transactionDto.request;
+package com.github.jukkarol.dto.accountDto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -10,12 +10,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MakeTransferRequest {
+public class GetAccountDetailsRequest {
     @JsonIgnore
-    private Long userId;
+    private Long user_id;
 
-    private String fromAccountNumber;
-    private String toAccountNumber;
-
-    private Integer amount;
+    private String accountNumber;
 }

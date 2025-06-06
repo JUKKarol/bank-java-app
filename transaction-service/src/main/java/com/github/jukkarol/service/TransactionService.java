@@ -1,11 +1,13 @@
 package com.github.jukkarol.service;
 
-import com.github.jukkarol.dto.transactionDto.request.MakeTransferRequest;
-import com.github.jukkarol.dto.transactionDto.response.MakeTransferResponse;
+import com.github.jukkarol.dto.transactionDto.request.MakeTransactionRequest;
+import com.github.jukkarol.dto.transactionDto.response.MakeTransactionResponse;
 import com.github.jukkarol.exception.InsufficientFundsException;
 import com.github.jukkarol.exception.NotFoundException;
 import com.github.jukkarol.exception.PermissionDeniedException;
+import com.github.jukkarol.mapper.TransactionMapper;
 import com.github.jukkarol.model.Account;
+import com.github.jukkarol.model.Transaction;
 import com.github.jukkarol.repository.AccountRepository;
 import com.github.jukkarol.repository.TransactionRepository;
 import lombok.AllArgsConstructor;
@@ -16,8 +18,9 @@ import org.springframework.stereotype.Service;
 public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
+    private final TransactionMapper transactionMapper;
 
-    public MakeTransferResponse makeTransfer(MakeTransferRequest request)
+    public MakeTransactionResponse makeTransfer(MakeTransactionRequest request)
     {
         Account fromAccount = accountRepository.findByAccountNumber(request.getFromAccountNumber());
 
@@ -46,6 +49,9 @@ public class TransactionService {
         accountRepository.save(fromAccount);
         accountRepository.save(toAccount);
 
-        return new MakeTransferResponse(fromAccount.getBalance(), request.getAmount());
+        Transaction transaction = transactionMapper.makeTransactionRequestToTransfer(request);
+        transactionRepository.save(transaction);
+
+        return new MakeTransactionResponse(fromAccount.getBalance(), request.getAmount());
     }
 }

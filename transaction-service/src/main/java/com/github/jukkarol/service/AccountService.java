@@ -1,10 +1,13 @@
 package com.github.jukkarol.service;
 
+import com.github.jukkarol.dto.accountDto.AccountDetailsDisplayDto;
 import com.github.jukkarol.dto.accountDto.AccountDisplayDto;
 import com.github.jukkarol.dto.accountDto.request.CreateAccountRequest;
+import com.github.jukkarol.dto.accountDto.request.GetAccountDetailsRequest;
 import com.github.jukkarol.dto.accountDto.request.GetMyAccountsRequest;
 import com.github.jukkarol.dto.accountDto.response.CreateAccountResponse;
 import com.github.jukkarol.dto.accountDto.response.GetMyAccountsResponse;
+import com.github.jukkarol.exception.PermissionDeniedException;
 import com.github.jukkarol.mapper.AccountMapper;
 import com.github.jukkarol.model.Account;
 import com.github.jukkarol.repository.AccountRepository;
@@ -38,12 +41,23 @@ public class AccountService {
     public GetMyAccountsResponse getAccountsByUserId(GetMyAccountsRequest request) {
         GetMyAccountsResponse response = new GetMyAccountsResponse();
 
-        List<Account> accounts= accountRepository.findAllByUserId(request.getUser_id());
+        List<Account> accounts = accountRepository.findAllByUserId(request.getUser_id());
 
         List<AccountDisplayDto> accountDtos = accountMapper.accountsToAccountDisplayDtos(accounts);
 
         response.setAccounts(accountDtos);
 
         return response;
+    }
+
+    public AccountDetailsDisplayDto getAccountByAccountNumber(GetAccountDetailsRequest request) {
+        Account account = accountRepository.findByAccountNumber(request.getAccountNumber());
+
+        if (!account.getUserId().equals(request.getUser_id()))
+        {
+            throw new PermissionDeniedException();
+        }
+
+        return accountMapper.accountToAccountDetailsDisplayDto(account);
     }
 }

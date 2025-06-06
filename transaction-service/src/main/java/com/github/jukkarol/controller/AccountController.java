@@ -1,7 +1,9 @@
 package com.github.jukkarol.controller;
 
 import com.github.jukkarol.configs.JwtAuthenticationToken;
+import com.github.jukkarol.dto.accountDto.AccountDetailsDisplayDto;
 import com.github.jukkarol.dto.accountDto.request.CreateAccountRequest;
+import com.github.jukkarol.dto.accountDto.request.GetAccountDetailsRequest;
 import com.github.jukkarol.dto.accountDto.request.GetMyAccountsRequest;
 import com.github.jukkarol.dto.accountDto.response.CreateAccountResponse;
 import com.github.jukkarol.dto.accountDto.response.GetMyAccountsResponse;
@@ -16,10 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -55,7 +54,7 @@ public class AccountController {
             request.setUser_id(userId);
         }
 
-        return new ResponseEntity<>(accountService.createAccount(request), HttpStatus.OK);
+        return new ResponseEntity<>(accountService.createAccount(request), HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -65,7 +64,7 @@ public class AccountController {
     )
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "201",
+                    responseCode = "200",
                     description = "Returns all logged user accounts",
                     content = @Content(
                             mediaType = "application/json",
@@ -83,5 +82,34 @@ public class AccountController {
         }
 
         return new ResponseEntity<>(accountService.getAccountsByUserId(request), HttpStatus.OK);
+    }
+
+    @GetMapping("/{accountNumber}")
+    @Operation(
+            summary = "Get account",
+            description = "Get account with details"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Returns user account with details",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = AccountDetailsDisplayDto.class)
+                    )
+            ),
+    })
+    public ResponseEntity<AccountDetailsDisplayDto> getAccountDetails(@PathVariable String accountNumber) {
+        GetAccountDetailsRequest request = new GetAccountDetailsRequest();
+        request.setAccountNumber(accountNumber);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication instanceof JwtAuthenticationToken jwtAuth) {
+            Long userId = jwtAuth.getUserId();
+            request.setUser_id(userId);
+        }
+
+        return new ResponseEntity<>(accountService.getAccountByAccountNumber(request), HttpStatus.OK);
     }
 }

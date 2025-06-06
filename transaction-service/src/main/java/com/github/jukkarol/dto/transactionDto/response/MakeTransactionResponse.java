@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MakeTransferResponse {
+public class MakeTransactionResponse {
     private Integer balanceAfterTransaction;
     private Integer amount;
 }

@@ -1,5 +1,6 @@
 package com.github.jukkarol.mapper;
 
+import com.github.jukkarol.dto.accountDto.AccountDetailsDisplayDto;
 import com.github.jukkarol.dto.accountDto.AccountDisplayDto;
 import com.github.jukkarol.dto.accountDto.response.CreateAccountResponse;
 import com.github.jukkarol.model.Account;
@@ -14,4 +15,6 @@ public interface AccountMapper {
     List<AccountDisplayDto> accountsToAccountDisplayDtos(List<Account> accounts);
 
     AccountDisplayDto accountToAccountDisplayDto(Account account);
+
+    AccountDetailsDisplayDto accountToAccountDetailsDisplayDto(Account account);
 }
