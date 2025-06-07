@@ -12,5 +12,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CreateAccountRequest {
     @JsonIgnore
-    private Long user_id;
+    private Long userId;
 }

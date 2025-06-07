@@ -51,7 +51,7 @@ public class AccountController {
 
         if (authentication instanceof JwtAuthenticationToken jwtAuth) {
             Long userId = jwtAuth.getUserId();
-            request.setUser_id(userId);
+            request.setUserId(userId);
         }
 
         return new ResponseEntity<>(accountService.createAccount(request), HttpStatus.CREATED);
@@ -78,7 +78,7 @@ public class AccountController {
 
         if (authentication instanceof JwtAuthenticationToken jwtAuth) {
             Long userId = jwtAuth.getUserId();
-            request.setUser_id(userId);
+            request.setUserId(userId);
         }
 
         return new ResponseEntity<>(accountService.getAccountsByUserId(request), HttpStatus.OK);
@@ -107,7 +107,7 @@ public class AccountController {
 
         if (authentication instanceof JwtAuthenticationToken jwtAuth) {
             Long userId = jwtAuth.getUserId();
-            request.setUser_id(userId);
+            request.setUserId(userId);
         }
 
         return new ResponseEntity<>(accountService.getAccountByAccountNumber(request), HttpStatus.OK);

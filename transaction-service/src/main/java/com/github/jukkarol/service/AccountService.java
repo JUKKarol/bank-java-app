@@ -28,7 +28,7 @@ public class AccountService {
         Random generator = new Random();
 
         Account account = new Account();
-        account.setUserId(request.getUser_id());
+        account.setUserId(request.getUserId());
         account.setBalance(1000);
         String accountNumber = String.format("%010d", generator.nextLong(1_000_000_0000L));
         account.setAccountNumber(accountNumber);
@@ -41,7 +41,7 @@ public class AccountService {
     public GetMyAccountsResponse getAccountsByUserId(GetMyAccountsRequest request) {
         GetMyAccountsResponse response = new GetMyAccountsResponse();
 
-        List<Account> accounts = accountRepository.findAllByUserId(request.getUser_id());
+        List<Account> accounts = accountRepository.findAllByUserId(request.getUserId());
 
         List<AccountDisplayDto> accountDtos = accountMapper.accountsToAccountDisplayDtos(accounts);
 
@@ -53,7 +53,7 @@ public class AccountService {
     public AccountDetailsDisplayDto getAccountByAccountNumber(GetAccountDetailsRequest request) {
         Account account = accountRepository.findByAccountNumber(request.getAccountNumber());
 
-        if (!account.getUserId().equals(request.getUser_id()))
+        if (!account.getUserId().equals(request.getUserId()))
         {
             throw new PermissionDeniedException();
         }

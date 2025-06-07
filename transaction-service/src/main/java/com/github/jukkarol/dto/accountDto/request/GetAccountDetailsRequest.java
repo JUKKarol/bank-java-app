@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class GetAccountDetailsRequest {
     @JsonIgnore
-    private Long user_id;
+    private Long userId;
 
     private String accountNumber;
 }
