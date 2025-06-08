@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
@@ -52,7 +53,7 @@ public class AuthenticationController {
                     description = "Invalid request format or validation errors"
             )
     })
-    public ResponseEntity<RegisterUserResponse> register(@RequestBody RegisterUserRequest registerUserRequest) {
+    public ResponseEntity<RegisterUserResponse> register(@RequestBody @Valid RegisterUserRequest registerUserRequest) {
         RegisterUserResponse registeredUser = authenticationService.signup(registerUserRequest);
 
         return ResponseEntity.ok(registeredUser);
@@ -81,7 +82,7 @@ public class AuthenticationController {
                     description = "Invalid request format"
             )
     })
-    public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserRequest loginUserRequest) {
+    public ResponseEntity<LoginResponse> authenticate(@RequestBody @Valid LoginUserRequest loginUserRequest) {
         User authenticatedUser = authenticationService.authenticate(loginUserRequest);
 
         String jwtToken = jwtService.generateToken(authenticatedUser);
