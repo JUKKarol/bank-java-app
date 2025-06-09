@@ -3,13 +3,16 @@ package com.github.jukkarol.service;
 import com.github.jukkarol.dto.userDto.request.LoginUserRequest;
 import com.github.jukkarol.dto.userDto.request.RegisterUserRequest;
 import com.github.jukkarol.dto.userDto.response.RegisterUserResponse;
+import com.github.jukkarol.exception.ConflictException;
 import com.github.jukkarol.model.User;
 import com.github.jukkarol.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Random;
 
@@ -20,13 +23,17 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    public RegisterUserResponse signup(RegisterUserRequest input) {
+    public RegisterUserResponse signup(RegisterUserRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new ConflictException("User with email: " + request.getEmail() + " already exists");
+        }
+
         Random generator = new Random();
 
         User user = new User();
-        user.setName(input.getName());
-        user.setEmail(input.getEmail());
-        user.setPassword(passwordEncoder.encode(input.getPassword()));
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         User createdUser =  userRepository.save(user);
 

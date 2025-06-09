@@ -74,6 +74,14 @@ public class GlobalExceptionHandler {
         return errors;
     }
 
+    @ExceptionHandler(ConflictException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Map<String, String> handleConflictException(Exception ex) {
+        return Map.of(
+                "error", ex.getMessage()
+        );
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String, String> handleUnknownException(Exception ex) {
