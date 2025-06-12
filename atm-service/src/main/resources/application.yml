@@ -1,0 +1,43 @@
+server:
+  port: 8083
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/atm-service
+    username: postgres
+    password: P@ssw0rd
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+security:
+  jwt:
+    secret-key: yourbase64secretkeyyourbase64secretkeyyourbase64secretkeyyourbase64secretkey
+    expiration-time: 3600000
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    com.github.jukkarol: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql: TRACE
+    org.springframework.web: DEBUG
+    org.springframework.transaction: DEBUG
+
+  file:
+    name: logs/atm-service.${date:yyyy-MM-dd}.log
+
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+  logback:
+    rollingpolicy:
+      max-file-size: 5KB
+      max-history: 30
+      total-size-cap: 2GB
+      file-name-pattern: logs/atm-service.%d{yyyy-MM-dd}.%i.log
