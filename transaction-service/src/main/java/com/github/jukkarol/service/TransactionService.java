@@ -50,6 +50,8 @@ public class TransactionService {
         accountRepository.save(toAccount);
 
         Transaction transaction = transactionMapper.makeTransactionRequestToTransfer(request);
+        transaction.setFromAccountBalanceAfterTransaction(fromAccount.getBalance());
+        transaction.setToAccountBalanceAfterTransaction(toAccount.getBalance());
         transactionRepository.save(transaction);
 
         return new MakeTransactionResponse(fromAccount.getBalance(), request.getAmount());

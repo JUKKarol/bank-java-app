@@ -26,6 +26,12 @@ public class Transaction {
     @Column(nullable = false)
     private Integer amount;
 
+    @Column(nullable = false)
+    private Integer fromAccountBalanceAfterTransaction;
+
+    @Column(nullable = false)
+    private Integer toAccountBalanceAfterTransaction;
+
     @Column(nullable = false, name = "from_account_number")
     private String fromAccountNumber;
 
