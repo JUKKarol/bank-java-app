@@ -11,7 +11,6 @@ import com.github.jukkarol.exception.PermissionDeniedException;
 import com.github.jukkarol.mapper.AccountMapper;
 import com.github.jukkarol.model.Account;
 import com.github.jukkarol.repository.AccountRepository;
-import com.github.jukkarol.service.AccountService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
