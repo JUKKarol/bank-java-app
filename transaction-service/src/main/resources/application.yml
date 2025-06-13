@@ -37,7 +37,7 @@ logging:
   
   logback:
     rollingpolicy:
-      max-file-size: 5KB
+      max-file-size: 50MB
       max-history: 30
       total-size-cap: 2GB
       file-name-pattern: logs/transaction-service.%d{yyyy-MM-dd}.%i.log
