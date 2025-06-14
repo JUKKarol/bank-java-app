@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -16,6 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
@@ -47,7 +50,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         Long userId = jwtService.extractUserId(jwt);
 
         if (email != null && userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            User userDetails = new User(email, "", List.of());
+            List<String> roles = jwtService.extractRoles(jwt);
+            List<GrantedAuthority> authorities = roles.stream()
+                    .map(role -> role.startsWith("ROLE_") ?
+                            new SimpleGrantedAuthority(role) :
+                            new SimpleGrantedAuthority("ROLE_" + role))
+                    .collect(Collectors.toList());
+
+            User userDetails = new User(email, "", authorities);
 
             JwtAuthenticationToken authToken = new JwtAuthenticationToken(
                     userDetails, userId, email, userDetails.getAuthorities()
