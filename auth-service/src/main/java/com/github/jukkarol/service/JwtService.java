@@ -39,19 +39,11 @@ public class JwtService {
     public String generateToken(User user) {
         Map<String, Object> extraClaims = new HashMap<>();
         extraClaims.put("Id", user.getId());
+        extraClaims.put("roles", user.getRoles());
 
-        UserDetails userDetails = new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-                new ArrayList<>()
-        );
-
-        return generateToken(extraClaims, userDetails);
+        return buildToken(extraClaims, user, jwtExpiration);
     }
 
-    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-        return buildToken(extraClaims, userDetails, jwtExpiration);
-    }
 
     private String buildToken(
             Map<String, Object> extraClaims,
