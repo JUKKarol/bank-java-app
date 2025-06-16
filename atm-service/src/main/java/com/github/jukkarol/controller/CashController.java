@@ -3,6 +3,7 @@ package com.github.jukkarol.controller;
 import com.github.jukkarol.configs.JwtAuthenticationToken;
 import com.github.jukkarol.dto.depositDto.request.MakeDepositRequest;
 import com.github.jukkarol.dto.depositDto.response.MakeDepositResponse;
+import com.github.jukkarol.service.DepositService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,11 +21,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/cash")
 @PreAuthorize("hasRole('ATM')")
 public class CashController {
+    private final DepositService depositService;
+
     //swagger
-    @PostMapping
+    @PostMapping("deposit")
     public ResponseEntity<MakeDepositResponse> makeDeposit(@RequestBody @Valid MakeDepositRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+        if (authentication instanceof JwtAuthenticationToken jwtAuth) {
+            Long userId = jwtAuth.getUserId();
+            request.setUserId(userId);
+        }
 
-        return new ResponseEntity<>(request, HttpStatus.OK);
+        MakeDepositResponse response = depositService.makeDeposit(request);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
