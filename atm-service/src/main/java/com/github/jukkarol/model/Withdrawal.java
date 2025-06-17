@@ -27,9 +27,6 @@ public class Withdrawal {
     private Integer amount;
 
     @Column(nullable = false)
-    private Integer balanceAfterTransaction;
-
-    @Column(unique = true, nullable = false)
     private String accountNumber;
 
     @Column(updatable = false, name = "created_at")

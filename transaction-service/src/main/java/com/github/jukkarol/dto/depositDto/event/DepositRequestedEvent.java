@@ -1,15 +1,15 @@
-package com.github.jukkarol.dto.depositDto.response;
+package com.github.jukkarol.dto.depositDto.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
-public class MakeDepositResponse {
+@AllArgsConstructor
+@NoArgsConstructor
+public class DepositRequestedEvent {
     private Integer amount;
 
     private String accountNumber;
