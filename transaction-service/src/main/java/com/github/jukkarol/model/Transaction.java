@@ -26,7 +26,6 @@ public class Transaction {
     @Column(nullable = false)
     private Integer amount;
 
-    @Column(nullable = false)
     private Integer fromAccountBalanceAfterTransaction;
 
     @Column(nullable = false)

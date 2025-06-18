@@ -7,7 +7,9 @@ spring:
     username: postgres
     password: P@ssw0rd
     driver-class-name: org.postgresql.Driver
-  
+  kafka:
+    bootstrap-servers: localhost:9092
+
   jpa:
     show-sql: true
     hibernate:
