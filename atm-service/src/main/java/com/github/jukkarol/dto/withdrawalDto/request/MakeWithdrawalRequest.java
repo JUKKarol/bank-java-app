@@ -1,4 +1,4 @@
-package com.github.jukkarol.dto.depositDto.request;
+package com.github.jukkarol.dto.withdrawalDto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MakeDepositRequest {
+public class MakeWithdrawalRequest {
     private Integer amount;
 
     private String accountNumber;

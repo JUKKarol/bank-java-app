@@ -4,6 +4,11 @@ import com.github.jukkarol.configs.JwtAuthenticationToken;
 import com.github.jukkarol.dto.depositDto.request.MakeDepositRequest;
 import com.github.jukkarol.dto.depositDto.response.MakeDepositResponse;
 import com.github.jukkarol.service.DepositService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,16 +28,29 @@ import org.springframework.web.bind.annotation.RestController;
 public class CashController {
     private final DepositService depositService;
 
-    //swagger
     @PostMapping("deposit")
+    @Operation(
+            summary = "Make deposit",
+            description = "Make deposit for a specified user"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Deposit finished successfully",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = MakeDepositResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Validation error",
+                    content = @Content(
+                            mediaType = "application/json"
+                    )
+            ),
+    })
     public ResponseEntity<MakeDepositResponse> makeDeposit(@RequestBody @Valid MakeDepositRequest request) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication instanceof JwtAuthenticationToken jwtAuth) {
-            Long userId = jwtAuth.getUserId();
-            request.setUserId(userId);
-        }
-
         MakeDepositResponse response = depositService.makeDeposit(request);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
