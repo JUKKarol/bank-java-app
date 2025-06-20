@@ -1,4 +1,4 @@
-package com.github.jukkarol.kafka;
+package com.github.jukkarol.kafka.config;
 
 import com.github.jukkarol.dto.depositDto.event.DepositRequestedEvent;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -15,12 +15,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-public class KafkaProducerConfig {
+public class DepositKafkaProducerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
     @Bean
-    public ProducerFactory<String, DepositRequestedEvent> producerFactory() {
+    public ProducerFactory<String, DepositRequestedEvent> depositProducerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -29,7 +29,7 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, DepositRequestedEvent> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
+    public KafkaTemplate<String, DepositRequestedEvent> depositKafkaTemplate() {
+        return new KafkaTemplate<>(depositProducerFactory());
     }
 }

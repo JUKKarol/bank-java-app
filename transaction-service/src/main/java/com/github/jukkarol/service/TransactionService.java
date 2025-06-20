@@ -3,6 +3,7 @@ package com.github.jukkarol.service;
 import com.github.jukkarol.dto.depositDto.event.DepositRequestedEvent;
 import com.github.jukkarol.dto.transactionDto.request.MakeTransactionRequest;
 import com.github.jukkarol.dto.transactionDto.response.MakeTransactionResponse;
+import com.github.jukkarol.dto.withdrawalDto.event.WithdrawalRequestedEvent;
 import com.github.jukkarol.exception.InsufficientFundsException;
 import com.github.jukkarol.exception.NotFoundException;
 import com.github.jukkarol.exception.PermissionDeniedException;
@@ -73,6 +74,27 @@ public class TransactionService {
         Transaction transaction = new Transaction();
         transaction.setAmount(event.getAmount());
         transaction.setToAccountBalanceAfterTransaction(account.getBalance() + event.getAmount());
+        transaction.setFromAccountNumber("ATM");
+        transaction.setToAccountNumber(event.getAccountNumber());
+
+        transactionRepository.save(transaction);
+    }
+
+    public void makeWithdrawal(WithdrawalRequestedEvent event)
+    {
+        Account account = accountRepository.findByAccountNumber(event.getAccountNumber());
+
+        if (account == null) {
+            throw new NotFoundException(Account.class.getSimpleName(), event.getAccountNumber());
+        }
+
+        account.setBalance(account.getBalance() + event.getAmount());
+
+        accountRepository.save(account);
+
+        Transaction transaction = new Transaction();
+        transaction.setAmount(-Math.abs(event.getAmount()));
+        transaction.setToAccountBalanceAfterTransaction(account.getBalance() - event.getAmount());
         transaction.setFromAccountNumber("ATM");
         transaction.setToAccountNumber(event.getAccountNumber());
 

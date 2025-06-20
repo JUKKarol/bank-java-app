@@ -1,4 +1,4 @@
-package com.github.jukkarol.kafka;
+package com.github.jukkarol.kafka.listener;
 
 import com.github.jukkarol.dto.depositDto.event.DepositRequestedEvent;
 import com.github.jukkarol.service.TransactionService;

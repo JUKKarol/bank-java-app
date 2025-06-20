@@ -1,6 +1,6 @@
-package com.github.jukkarol.kafka;
+package com.github.jukkarol.kafka.config;
 
-import com.github.jukkarol.dto.depositDto.event.DepositRequestedEvent;
+import com.github.jukkarol.dto.withdrawalDto.event.WithdrawalRequestedEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,12 +15,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-public class KafkaConsumerConfig {
+public class WithdrawalKafkaConsumerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
     @Bean
-    public ConsumerFactory<String, DepositRequestedEvent> consumerFactory() {
+    public ConsumerFactory<String, WithdrawalRequestedEvent> withdrawalConsumerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         config.put(ConsumerConfig.GROUP_ID_CONFIG, "transaction-group");
@@ -31,10 +31,10 @@ public class KafkaConsumerConfig {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, DepositRequestedEvent> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, DepositRequestedEvent> factory =
+    public ConcurrentKafkaListenerContainerFactory<String, WithdrawalRequestedEvent> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, WithdrawalRequestedEvent> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory());
+        factory.setConsumerFactory(withdrawalConsumerFactory());
         return factory;
     }
 }
