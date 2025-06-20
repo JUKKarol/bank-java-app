@@ -88,13 +88,13 @@ public class TransactionService {
             throw new NotFoundException(Account.class.getSimpleName(), event.getAccountNumber());
         }
 
-        account.setBalance(account.getBalance() + event.getAmount());
+        account.setBalance(account.getBalance() - event.getAmount());
 
         accountRepository.save(account);
 
         Transaction transaction = new Transaction();
         transaction.setAmount(-Math.abs(event.getAmount()));
-        transaction.setToAccountBalanceAfterTransaction(account.getBalance() - event.getAmount());
+        transaction.setToAccountBalanceAfterTransaction(account.getBalance());
         transaction.setFromAccountNumber("ATM");
         transaction.setToAccountNumber(event.getAccountNumber());
 
