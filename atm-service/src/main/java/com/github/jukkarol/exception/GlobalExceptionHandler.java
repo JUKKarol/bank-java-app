@@ -33,4 +33,10 @@ public class GlobalExceptionHandler {
                 "id", ex.getId()
         );
     }
+
+    @ExceptionHandler(PermissionDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public Map<String, String> handlePermissionDenied(PermissionDeniedException ex) {
+        return Map.of("error", ex.getMessage());
+    }
 }
