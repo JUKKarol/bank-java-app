@@ -82,6 +82,16 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handleNotFound(NotFoundException ex) {
+        return Map.of(
+                "error", ex.getMessage(),
+                "resource", ex.getResource(),
+                "id", ex.getId()
+        );
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String, String> handleUnknownException(Exception ex) {

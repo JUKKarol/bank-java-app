@@ -35,6 +35,9 @@ public class JwtService {
         return extractClaim(token, claims -> claims.get("roles", List.class));
     }
 
+    public boolean isTokenValid(String token) {
+        return !isTokenExpired(token) && hasValidSignature(token);
+    }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
@@ -94,5 +97,17 @@ public class JwtService {
 
     public long getExpirationTime() {
         return jwtExpiration;
+    }
+
+    private boolean hasValidSignature(String token) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(getSignInKey())
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
     }
 }
