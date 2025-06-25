@@ -1,6 +1,5 @@
 package com.github.jukkarol.controller;
 
-import com.github.jukkarol.configs.JwtAuthenticationToken;
 import com.github.jukkarol.dto.roleDto.request.CreateRoleRequest;
 import com.github.jukkarol.dto.roleDto.response.CreateRoleResponse;
 import com.github.jukkarol.dto.userDto.request.LoginUserRequest;
@@ -9,7 +8,7 @@ import com.github.jukkarol.dto.userDto.response.LoginResponse;
 import com.github.jukkarol.dto.userDto.response.RegisterUserResponse;
 import com.github.jukkarol.model.User;
 import com.github.jukkarol.service.AuthenticationService;
-import com.github.jukkarol.service.JwtService;
+import com.github.jukkarol.service.JwtServiceExtended;
 import com.github.jukkarol.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -22,8 +21,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Tag(name = "Authentication", description = "Authentication endpoints for basic user operations")
 public class AuthenticationController {
-    private final JwtService jwtService;
+    private final JwtServiceExtended jwtService;
     private final AuthenticationService authenticationService;
     private final UserService userService;
 
@@ -101,7 +98,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(loginResponse);
     }
 
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/role")
     @Operation(
             summary = "Add user Role",

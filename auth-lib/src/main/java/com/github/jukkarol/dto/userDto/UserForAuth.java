@@ -1,4 +1,4 @@
-package com.github.jukkarol.models;
+package com.github.jukkarol.dto.userDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +14,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User implements UserDetails {
+public class UserForAuth implements UserDetails {
     private Long id;
     private String email;
     private String password;
