@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/transaction")
+@RequestMapping("transaction")
 public class TransactionController {
     private final TransactionService transactionService;
 

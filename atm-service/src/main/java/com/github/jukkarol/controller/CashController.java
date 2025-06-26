@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("api/cash")
+@RequestMapping("cash")
 @PreAuthorize("hasRole('ATM')")
 public class CashController {
     private final DepositService depositService;
