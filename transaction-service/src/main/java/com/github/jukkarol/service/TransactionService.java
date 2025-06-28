@@ -1,7 +1,10 @@
 package com.github.jukkarol.service;
 
 import com.github.jukkarol.dto.depositDto.event.DepositRequestedEvent;
+import com.github.jukkarol.dto.transactionDto.TransactionDisplayDto;
+import com.github.jukkarol.dto.transactionDto.request.GetAccountTransactionsRequest;
 import com.github.jukkarol.dto.transactionDto.request.MakeTransactionRequest;
+import com.github.jukkarol.dto.transactionDto.response.GetAccountTransactionsResponse;
 import com.github.jukkarol.dto.transactionDto.response.MakeTransactionResponse;
 import com.github.jukkarol.dto.withdrawalDto.event.WithdrawalRequestedEvent;
 import com.github.jukkarol.exception.InsufficientFundsException;
@@ -14,6 +17,8 @@ import com.github.jukkarol.repository.AccountRepository;
 import com.github.jukkarol.repository.TransactionRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @AllArgsConstructor
 @Service
@@ -57,6 +62,28 @@ public class TransactionService {
         transactionRepository.save(transaction);
 
         return new MakeTransactionResponse(fromAccount.getBalance(), request.getAmount());
+    }
+
+    public GetAccountTransactionsResponse getAccountTransactions(GetAccountTransactionsRequest request)
+    {
+        Account fromAccount = accountRepository.findByAccountNumber(request.getAccountNumber());
+
+        if (fromAccount == null) {
+            throw new NotFoundException(Account.class.getSimpleName(), request.getAccountNumber());
+        }
+
+        if (!request.getUserId().equals(fromAccount.getUserId()))
+        {
+            throw new PermissionDeniedException();
+        }
+
+        List<Transaction> transactions = transactionRepository
+                .findAllByFromAccountNumberOrToAccountNumber(request.getAccountNumber(), request.getAccountNumber());
+
+        List<TransactionDisplayDto> transactionsDto = transactionMapper
+                .transactionsToTransactionDisplayDtos(transactions, request.getAccountNumber());
+
+        return new GetAccountTransactionsResponse(transactionsDto);
     }
 
     public void makeDeposit(DepositRequestedEvent event)

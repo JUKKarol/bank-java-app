@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class TransactionDisplayDto {
     private Integer amount;
 
-    private Integer BalanceAfterTransaction;
+    private Integer balanceAfterTransaction;
 
     private String fromAccountNumber;
 

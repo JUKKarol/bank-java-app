@@ -35,7 +35,7 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
     private final UserService userService;
 
-    @PostMapping("/signup")
+    @PostMapping("signup")
     @Operation(
             summary = "User registration",
             description = "Creates a new user account and returns user details"
@@ -64,7 +64,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(registeredUser);
     }
 
-    @PostMapping("/login")
+    @PostMapping("login")
     @Operation(
             summary = "User login",
             description = "Authenticates user with email and password, returns JWT token on success"
@@ -99,7 +99,7 @@ public class AuthenticationController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/role")
+    @PostMapping("role")
     @Operation(
             summary = "Add user Role",
             description = "Create new role for specified user"

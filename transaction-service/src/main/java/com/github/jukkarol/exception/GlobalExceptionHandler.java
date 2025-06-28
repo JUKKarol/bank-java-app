@@ -5,6 +5,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +27,25 @@ public class GlobalExceptionHandler {
         ex.getBindingResult().getFieldErrors().forEach(error ->
                 errors.put(error.getField(), error.getDefaultMessage())
         );
+
+        return errors;
+    }
+
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleValidation(HandlerMethodValidationException ex) {
+
+        Map<String, String> errors = new HashMap<>();
+
+        ex.getParameterValidationResults()
+                .forEach(pvr -> {
+                    String field = pvr.getMethodParameter().getParameterName();
+
+                    pvr.getResolvableErrors().forEach(resolvable -> {
+                        String message = resolvable.getDefaultMessage();
+                        errors.merge(field, message, (oldVal, newVal) -> oldVal + "; " + newVal);
+                    });
+                });
 
         return errors;
     }

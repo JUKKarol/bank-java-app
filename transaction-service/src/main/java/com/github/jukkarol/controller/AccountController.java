@@ -15,6 +15,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -84,7 +87,7 @@ public class AccountController {
         return new ResponseEntity<>(accountService.getAccountsByUserId(request), HttpStatus.OK);
     }
 
-    @GetMapping("/{accountNumber}")
+    @GetMapping("{accountNumber}")
     @Operation(
             summary = "Get account",
             description = "Get account with details"
@@ -99,7 +102,7 @@ public class AccountController {
                     )
             ),
     })
-    public ResponseEntity<AccountDetailsDisplayDto> getAccountDetails(@PathVariable String accountNumber) {
+    public ResponseEntity<AccountDetailsDisplayDto> getAccountDetails(@PathVariable @Valid @Size(min=10, max=10) @NotEmpty String accountNumber) {
         GetAccountDetailsRequest request = new GetAccountDetailsRequest();
         request.setAccountNumber(accountNumber);
 
