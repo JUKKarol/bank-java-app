@@ -1,9 +1,12 @@
 package com.github.jukkarol.controller;
 
+import com.github.jukkarol.configs.JwtAuthenticationToken;
 import com.github.jukkarol.dto.roleDto.request.CreateRoleRequest;
 import com.github.jukkarol.dto.roleDto.request.DeleteRoleRequest;
+import com.github.jukkarol.dto.roleDto.request.GetRolesRequest;
 import com.github.jukkarol.dto.roleDto.response.CreateRoleResponse;
 import com.github.jukkarol.dto.roleDto.response.DeleteRoleResponse;
+import com.github.jukkarol.dto.roleDto.response.GetRolesResponse;
 import com.github.jukkarol.dto.userDto.request.LoginUserRequest;
 import com.github.jukkarol.dto.userDto.request.RegisterUserRequest;
 import com.github.jukkarol.dto.userDto.response.LoginResponse;
@@ -24,6 +27,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
@@ -38,7 +43,7 @@ public class RoleController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     @Operation(
-            summary = "Add user Role",
+            summary = "Add user role",
             description = "Create new role for specified user"
     )
     @ApiResponses(value = {
@@ -68,13 +73,13 @@ public class RoleController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping
     @Operation(
-            summary = "Delete user Role",
+            summary = "Delete user role",
             description = "Delete role for specified user"
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Role created successful",
+                    description = "Role deleted successful",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = DeleteRoleResponse.class)
@@ -95,6 +100,42 @@ public class RoleController {
     })
     public ResponseEntity<DeleteRoleResponse> deleteRole(@RequestBody @Valid DeleteRoleRequest request) {
         DeleteRoleResponse response = roleService.deleteUserRole(request);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping
+    @Operation(
+            summary = "Get user roles",
+            description = "Get all roles for logged user"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Role returned successful",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = DeleteRoleResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid request format"
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Permission denied"
+            )
+    })
+    public ResponseEntity<GetRolesResponse> getRoles(@RequestBody @Valid GetRolesRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication instanceof JwtAuthenticationToken jwtAuth) {
+            Long userId = jwtAuth.getUserId();
+            request.setUserId(userId);
+        }
+
+        GetRolesResponse response = roleService.getUserRoles(request);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
