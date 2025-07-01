@@ -22,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class AccountServiceTest {
@@ -98,7 +99,7 @@ class AccountServiceTest {
 
         AccountDetailsDisplayDto expectedDto = new AccountDetailsDisplayDto();
 
-        when(accountRepository.findByAccountNumber("1234567890")).thenReturn(account);
+        when(accountRepository.findByAccountNumber("1234567890")).thenReturn(Optional.of(account));
         when(accountMapper.accountToAccountDetailsDisplayDto(account)).thenReturn(expectedDto);
 
         // when
@@ -119,9 +120,9 @@ class AccountServiceTest {
 
         Account account = new Account();
         account.setAccountNumber("1234567890");
-        account.setUserId(999L); // inny użytkownik
+        account.setUserId(999L);
 
-        when(accountRepository.findByAccountNumber("1234567890")).thenReturn(account);
+        when(accountRepository.findByAccountNumber("1234567890")).thenReturn(Optional.of(account));
 
         // when & then
         assertThrows(PermissionDeniedException.class, () -> {

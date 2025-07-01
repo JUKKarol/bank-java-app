@@ -19,7 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
@@ -74,7 +73,7 @@ public class TransactionController {
 
         MakeTransactionResponse response = transactionService.makeTransfer(request);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     //ToDo: Add pagination
@@ -86,7 +85,7 @@ public class TransactionController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Transfer done successfully",
+                    description = "Return all account transactions",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = MakeTransactionResponse.class)
@@ -112,7 +111,7 @@ public class TransactionController {
                     content = @Content(
                             mediaType = "application/json"
                     )
-            ),
+            )
     })
     public ResponseEntity<GetAccountTransactionsResponse> getAccountTransactions(@PathVariable @Valid @Size(min=10, max=10) @NotEmpty String accountNumber) {
         GetAccountTransactionsRequest request = new GetAccountTransactionsRequest();
@@ -127,6 +126,6 @@ public class TransactionController {
 
         GetAccountTransactionsResponse response = transactionService.getAccountTransactions(request);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok(response);
     }
 }

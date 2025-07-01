@@ -29,22 +29,16 @@ public class TransactionService {
 
     public MakeTransactionResponse makeTransfer(MakeTransactionRequest request)
     {
-        Account fromAccount = accountRepository.findByAccountNumber(request.getFromAccountNumber());
-
-        if (fromAccount == null) {
-            throw new NotFoundException(Account.class.getSimpleName(), request.getFromAccountNumber());
-        }
+        Account fromAccount = accountRepository.findByAccountNumber(request.getFromAccountNumber())
+                .orElseThrow(() -> new NotFoundException(Account.class.getSimpleName(), request.getFromAccountNumber()));
 
         if (!request.getUserId().equals(fromAccount.getUserId()))
         {
             throw new PermissionDeniedException();
         }
 
-        Account toAccount = accountRepository.findByAccountNumber(request.getToAccountNumber());
-
-        if (toAccount == null) {
-            throw new NotFoundException(Account.class.getSimpleName(), request.getToAccountNumber());
-        }
+        Account toAccount = accountRepository.findByAccountNumber(request.getToAccountNumber())
+                .orElseThrow(() -> new NotFoundException(Account.class.getSimpleName(), request.getToAccountNumber()));
 
         if (fromAccount.getBalance().compareTo(request.getAmount()) < 0) {
             throw new InsufficientFundsException("Not enough funds.");
@@ -66,13 +60,10 @@ public class TransactionService {
 
     public GetAccountTransactionsResponse getAccountTransactions(GetAccountTransactionsRequest request)
     {
-        Account fromAccount = accountRepository.findByAccountNumber(request.getAccountNumber());
+        Account account = accountRepository.findByAccountNumber(request.getAccountNumber())
+                .orElseThrow(() -> new NotFoundException(Account.class.getSimpleName(), request.getAccountNumber()));
 
-        if (fromAccount == null) {
-            throw new NotFoundException(Account.class.getSimpleName(), request.getAccountNumber());
-        }
-
-        if (!request.getUserId().equals(fromAccount.getUserId()))
+        if (!request.getUserId().equals(account.getUserId()))
         {
             throw new PermissionDeniedException();
         }
@@ -88,11 +79,8 @@ public class TransactionService {
 
     public void makeDeposit(DepositRequestedEvent event)
     {
-        Account account = accountRepository.findByAccountNumber(event.getAccountNumber());
-
-        if (account == null) {
-            throw new NotFoundException(Account.class.getSimpleName(), event.getAccountNumber());
-        }
+        Account account = accountRepository.findByAccountNumber(event.getAccountNumber())
+                .orElseThrow(() -> new NotFoundException(Account.class.getSimpleName(), event.getAccountNumber()));
 
         account.setBalance(account.getBalance() + event.getAmount());
 
@@ -109,11 +97,8 @@ public class TransactionService {
 
     public void makeWithdrawal(WithdrawalRequestedEvent event)
     {
-        Account account = accountRepository.findByAccountNumber(event.getAccountNumber());
-
-        if (account == null) {
-            throw new NotFoundException(Account.class.getSimpleName(), event.getAccountNumber());
-        }
+        Account account = accountRepository.findByAccountNumber(event.getAccountNumber())
+                .orElseThrow(() -> new NotFoundException(Account.class.getSimpleName(), event.getAccountNumber()));
 
         account.setBalance(account.getBalance() - event.getAmount());
 

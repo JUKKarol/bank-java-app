@@ -57,7 +57,7 @@ public class AccountController {
             request.setUserId(userId);
         }
 
-        return new ResponseEntity<>(accountService.createAccount(request), HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(accountService.createAccount(request));
     }
 
     @GetMapping
@@ -84,7 +84,7 @@ public class AccountController {
             request.setUserId(userId);
         }
 
-        return new ResponseEntity<>(accountService.getAccountsByUserId(request), HttpStatus.OK);
+        return ResponseEntity.ok(accountService.getAccountsByUserId(request));
     }
 
     @GetMapping("{accountNumber}")
@@ -101,6 +101,27 @@ public class AccountController {
                             schema = @Schema(implementation = AccountDetailsDisplayDto.class)
                     )
             ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Validation error",
+                    content = @Content(
+                            mediaType = "application/json"
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Permission denied",
+                    content = @Content(
+                            mediaType = "application/json"
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Account not found",
+                    content = @Content(
+                            mediaType = "application/json"
+                    )
+            ),
     })
     public ResponseEntity<AccountDetailsDisplayDto> getAccountDetails(@PathVariable @Valid @Size(min=10, max=10) @NotEmpty String accountNumber) {
         GetAccountDetailsRequest request = new GetAccountDetailsRequest();
@@ -113,6 +134,6 @@ public class AccountController {
             request.setUserId(userId);
         }
 
-        return new ResponseEntity<>(accountService.getAccountByAccountNumber(request), HttpStatus.OK);
+        return ResponseEntity.ok(accountService.getAccountByAccountNumber(request));
     }
 }

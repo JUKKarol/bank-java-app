@@ -46,12 +46,12 @@ public class AuthController {
                     )
             ),
             @ApiResponse(
-                    responseCode = "409",
-                    description = "User with this email already exists"
-            ),
-            @ApiResponse(
                     responseCode = "400",
                     description = "Invalid request format or validation errors"
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "User with this email already exists"
             )
     })
     public ResponseEntity<RegisterUserResponse> register(@RequestBody @Valid RegisterUserRequest registerUserRequest) {
@@ -75,12 +75,12 @@ public class AuthController {
                     )
             ),
             @ApiResponse(
-                    responseCode = "401",
-                    description = "Invalid credentials"
-            ),
-            @ApiResponse(
                     responseCode = "400",
                     description = "Invalid request format"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Invalid credentials"
             )
     })
     public ResponseEntity<LoginResponse> authenticate(@RequestBody @Valid LoginUserRequest loginUserRequest) {
@@ -89,8 +89,8 @@ public class AuthController {
         String jwtToken = jwtService.generateToken(authenticatedUser);
         long jwtExpirationTime = jwtService.getExpirationTime();
 
-        LoginResponse loginResponse = new LoginResponse(jwtToken, jwtExpirationTime);
+        LoginResponse response = new LoginResponse(jwtToken, jwtExpirationTime);
 
-        return ResponseEntity.ok(loginResponse);
+        return ResponseEntity.ok(response);
     }
 }

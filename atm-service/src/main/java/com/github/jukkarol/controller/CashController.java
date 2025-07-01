@@ -54,7 +54,7 @@ public class CashController {
     public ResponseEntity<MakeDepositResponse> makeDeposit(@RequestBody @Valid MakeDepositRequest request) {
         MakeDepositResponse response = depositService.makeDeposit(request);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("withdrawal")
@@ -82,6 +82,6 @@ public class CashController {
     public ResponseEntity<MakeWithdrawalResponse> makeWithdrawal(@RequestBody @Valid MakeWithdrawalRequest request) {
         MakeWithdrawalResponse response = withdrawalService.makeWithdrawal(request);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok(response);
     }
 }

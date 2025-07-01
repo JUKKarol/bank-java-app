@@ -7,6 +7,7 @@ import com.github.jukkarol.dto.accountDto.request.GetAccountDetailsRequest;
 import com.github.jukkarol.dto.accountDto.request.GetMyAccountsRequest;
 import com.github.jukkarol.dto.accountDto.response.CreateAccountResponse;
 import com.github.jukkarol.dto.accountDto.response.GetMyAccountsResponse;
+import com.github.jukkarol.exception.NotFoundException;
 import com.github.jukkarol.exception.PermissionDeniedException;
 import com.github.jukkarol.mapper.AccountMapper;
 import com.github.jukkarol.model.Account;
@@ -51,7 +52,8 @@ public class AccountService {
     }
 
     public AccountDetailsDisplayDto getAccountByAccountNumber(GetAccountDetailsRequest request) {
-        Account account = accountRepository.findByAccountNumber(request.getAccountNumber());
+        Account account = accountRepository.findByAccountNumber(request.getAccountNumber())
+                .orElseThrow(() -> new NotFoundException(Account.class.getSimpleName(), request.getAccountNumber()));
 
         if (!account.getUserId().equals(request.getUserId()))
         {

@@ -21,6 +21,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 @ExtendWith(MockitoExtension.class)
 class TransactionServiceTest {
 
@@ -61,8 +63,8 @@ class TransactionServiceTest {
 
     @Test
     void shouldMakeTransferSuccessfully() {
-        when(accountRepository.findByAccountNumber("1234567890")).thenReturn(fromAccount);
-        when(accountRepository.findByAccountNumber("0987654321")).thenReturn(toAccount);
+        when(accountRepository.findByAccountNumber("1234567890")).thenReturn(Optional.of(fromAccount));
+        when(accountRepository.findByAccountNumber("0987654321")).thenReturn(Optional.of(toAccount));
         when(transactionMapper.makeTransactionRequestToTransfer(request)).thenReturn(new Transaction());
 
         MakeTransactionResponse response = transactionService.makeTransfer(request);
@@ -79,7 +81,7 @@ class TransactionServiceTest {
 
     @Test
     void shouldThrowNotFoundExceptionIfFromAccountNotFound() {
-        when(accountRepository.findByAccountNumber("1234567890")).thenReturn(null);
+        when(accountRepository.findByAccountNumber("1234567890")).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> transactionService.makeTransfer(request));
     }
@@ -87,15 +89,15 @@ class TransactionServiceTest {
     @Test
     void shouldThrowPermissionDeniedIfUserIdDoesNotMatch() {
         fromAccount.setUserId(999L);
-        when(accountRepository.findByAccountNumber("1234567890")).thenReturn(fromAccount);
+        when(accountRepository.findByAccountNumber("1234567890")).thenReturn(Optional.of(fromAccount));
 
         assertThrows(PermissionDeniedException.class, () -> transactionService.makeTransfer(request));
     }
 
     @Test
     void shouldThrowNotFoundExceptionIfToAccountNotFound() {
-        when(accountRepository.findByAccountNumber("1234567890")).thenReturn(fromAccount);
-        when(accountRepository.findByAccountNumber("0987654321")).thenReturn(null);
+        when(accountRepository.findByAccountNumber("1234567890")).thenReturn(Optional.of(fromAccount));
+        when(accountRepository.findByAccountNumber("0987654321")).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> transactionService.makeTransfer(request));
     }
@@ -103,8 +105,8 @@ class TransactionServiceTest {
     @Test
     void shouldThrowInsufficientFundsIfNotEnoughBalance() {
         fromAccount.setBalance(100);
-        when(accountRepository.findByAccountNumber("1234567890")).thenReturn(fromAccount);
-        when(accountRepository.findByAccountNumber("0987654321")).thenReturn(toAccount);
+        when(accountRepository.findByAccountNumber("1234567890")).thenReturn(Optional.of(fromAccount));
+        when(accountRepository.findByAccountNumber("0987654321")).thenReturn(Optional.of(toAccount));
 
         assertThrows(InsufficientFundsException.class, () -> transactionService.makeTransfer(request));
     }

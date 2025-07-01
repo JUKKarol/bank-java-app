@@ -7,15 +7,9 @@ import com.github.jukkarol.dto.roleDto.request.GetRolesRequest;
 import com.github.jukkarol.dto.roleDto.response.CreateRoleResponse;
 import com.github.jukkarol.dto.roleDto.response.DeleteRoleResponse;
 import com.github.jukkarol.dto.roleDto.response.GetRolesResponse;
-import com.github.jukkarol.dto.userDto.request.LoginUserRequest;
-import com.github.jukkarol.dto.userDto.request.RegisterUserRequest;
-import com.github.jukkarol.dto.userDto.response.LoginResponse;
-import com.github.jukkarol.dto.userDto.response.RegisterUserResponse;
-import com.github.jukkarol.model.User;
 import com.github.jukkarol.service.AuthenticationService;
 import com.github.jukkarol.service.JwtServiceExtended;
 import com.github.jukkarol.service.RoleService;
-import com.github.jukkarol.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -48,7 +42,7 @@ public class RoleController {
     )
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "200",
+                    responseCode = "201",
                     description = "Role created successful",
                     content = @Content(
                             mediaType = "application/json",
@@ -67,7 +61,7 @@ public class RoleController {
     public ResponseEntity<CreateRoleResponse> createRole(@RequestBody @Valid CreateRoleRequest request) {
         CreateRoleResponse response = roleService.createUserRole(request);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -101,7 +95,7 @@ public class RoleController {
     public ResponseEntity<DeleteRoleResponse> deleteRole(@RequestBody @Valid DeleteRoleRequest request) {
         DeleteRoleResponse response = roleService.deleteUserRole(request);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
@@ -137,6 +131,6 @@ public class RoleController {
 
         GetRolesResponse response = roleService.getUserRoles(request);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok(response);
     }
 }
