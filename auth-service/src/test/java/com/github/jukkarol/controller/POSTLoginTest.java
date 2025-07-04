@@ -53,7 +53,7 @@ public class POSTLoginTest {
     void shouldReturn200WhenLoginIsSuccessful() throws Exception {
         LoginUserRequest loginRequest = new LoginUserRequest("test@example.com", "password123");
 
-        mockMvc.perform(post("/api/auth//login")
+        mockMvc.perform(post("/auth//login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isOk())
@@ -65,7 +65,7 @@ public class POSTLoginTest {
     void shouldReturn401WhenCredentialsAreInvalid() throws Exception {
         LoginUserRequest loginRequest = new LoginUserRequest("test@example.com", "wrongpassword");
 
-        mockMvc.perform(post("/api/auth//login")
+        mockMvc.perform(post("/auth//login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isUnauthorized());
@@ -79,7 +79,7 @@ public class POSTLoginTest {
                 }
                 """;
 
-        mockMvc.perform(post("/api/auth//login")
+        mockMvc.perform(post("/auth//login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidJson))
                 .andExpect(status().isBadRequest());

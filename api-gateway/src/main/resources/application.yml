@@ -8,21 +8,21 @@ spring:
     gateway:
       routes:
         - id: auth-service
-          uri: http://auth-service:8081
+          uri: http://localhost:8081
           predicates:
             - Path=/auth/**
           filters:
             - StripPrefix=1
 
         - id: transaction-service
-          uri: http://transaction-service:8082
+          uri: http://localhost:8082
           predicates:
             - Path=/transaction/**
           filters:
             - StripPrefix=1
 
         - id: atm-service
-          uri: http://atm-service:8083
+          uri: http://localhost:8083
           predicates:
             - Path=/atm/**
           filters:

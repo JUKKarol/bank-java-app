@@ -48,7 +48,7 @@ public class POSTSignupTest {
         RegisterUserRequest request = new RegisterUserRequest("TestUser", "test@example.com", "password123");
         String requestBody = objectMapper.writeValueAsString(request);
 
-        MvcResult result = mockMvc.perform(post("/api/auth/signup")
+        MvcResult result = mockMvc.perform(post("/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isOk())
@@ -75,7 +75,7 @@ public class POSTSignupTest {
         RegisterUserRequest request = new RegisterUserRequest("TestUser", "existing@example.com", "newpassword123");;
         String requestBody = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post("/api/auth/signup")
+        mockMvc.perform(post("/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isConflict());
@@ -87,7 +87,7 @@ public class POSTSignupTest {
         RegisterUserRequest request = new RegisterUserRequest("test@example.com", null, "Test User");
         String requestBody = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post("/api/auth/signup")
+        mockMvc.perform(post("/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isBadRequest());
