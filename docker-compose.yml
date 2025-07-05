@@ -134,6 +134,21 @@ services:
       context: .
       dockerfile: api-gateway/Dockerfile
     container_name: api-gateway
+    environment:
+      SPRING_CLOUD_GATEWAY_ROUTES_0_ID: auth-service
+      SPRING_CLOUD_GATEWAY_ROUTES_0_URI: http://auth-service:8081
+      SPRING_CLOUD_GATEWAY_ROUTES_0_PREDICATES_0: Path=/auth/**
+      SPRING_CLOUD_GATEWAY_ROUTES_0_FILTERS_0: StripPrefix=1
+
+      SPRING_CLOUD_GATEWAY_ROUTES_1_ID: transaction-service
+      SPRING_CLOUD_GATEWAY_ROUTES_1_URI: http://transaction-service:8082
+      SPRING_CLOUD_GATEWAY_ROUTES_1_PREDICATES_0: Path=/transaction/**
+      SPRING_CLOUD_GATEWAY_ROUTES_1_FILTERS_0: StripPrefix=1
+
+      SPRING_CLOUD_GATEWAY_ROUTES_2_ID: atm-service
+      SPRING_CLOUD_GATEWAY_ROUTES_2_URI: http://atm-service:8083
+      SPRING_CLOUD_GATEWAY_ROUTES_2_PREDICATES_0: Path=/atm/**
+      SPRING_CLOUD_GATEWAY_ROUTES_2_FILTERS_0: StripPrefix=1
     ports:
       - "8080:8080"
     depends_on:
