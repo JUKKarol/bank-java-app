@@ -5,27 +5,19 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class MakeTransactionRequest {
-    @JsonIgnore
-    private Long userId;
+public record MakeTransactionRequest(
+        @JsonIgnore
+        Long userId,
 
-    @Size(min=10, max=10)
-    @NotEmpty
-    private String fromAccountNumber;
-    @NotEmpty
-    @Size(min=10, max=10)
-    private String toAccountNumber;
+        @Size(min = 10, max = 10)
+        @NotEmpty
+        String fromAccountNumber,
+        @NotEmpty
+        @Size(min = 10, max = 10)
+        String toAccountNumber,
 
-    @NotNull
-    @Positive
-    private Integer amount;
-}
+        @NotNull
+        @Positive
+        Integer amount
+) { }

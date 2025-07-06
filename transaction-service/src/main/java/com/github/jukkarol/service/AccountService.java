@@ -29,7 +29,7 @@ public class AccountService {
         Random generator = new Random();
 
         Account account = new Account();
-        account.setUserId(request.getUserId());
+        account.setUserId(request.userId());
         account.setBalance(1000);
         String accountNumber = String.format("%010d", generator.nextLong(1_000_000_0000L));
         account.setAccountNumber(accountNumber);
@@ -40,22 +40,19 @@ public class AccountService {
     }
 
     public GetMyAccountsResponse getAccountsByUserId(GetMyAccountsRequest request) {
-        GetMyAccountsResponse response = new GetMyAccountsResponse();
 
-        List<Account> accounts = accountRepository.findAllByUserId(request.getUserId());
+        List<Account> accounts = accountRepository.findAllByUserId(request.userId());
 
         List<AccountDisplayDto> accountDtos = accountMapper.accountsToAccountDisplayDtos(accounts);
 
-        response.setAccounts(accountDtos);
-
-        return response;
+        return new GetMyAccountsResponse(accountDtos);
     }
 
     public AccountDetailsDisplayDto getAccountByAccountNumber(GetAccountDetailsRequest request) {
-        Account account = accountRepository.findByAccountNumber(request.getAccountNumber())
-                .orElseThrow(() -> new NotFoundException(Account.class.getSimpleName(), request.getAccountNumber()));
+        Account account = accountRepository.findByAccountNumber(request.accountNumber())
+                .orElseThrow(() -> new NotFoundException(Account.class.getSimpleName(), request.accountNumber()));
 
-        if (!account.getUserId().equals(request.getUserId()))
+        if (!account.getUserId().equals(request.userId()))
         {
             throw new PermissionDeniedException();
         }

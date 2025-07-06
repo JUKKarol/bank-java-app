@@ -39,8 +39,7 @@ class AccountServiceTest {
     @Test
     void shouldCreateAccount() {
         // given
-        CreateAccountRequest request = new CreateAccountRequest();
-        request.setUserId(123L);
+        CreateAccountRequest request = new CreateAccountRequest(123L);
 
         Account accountToSave = new Account();
         accountToSave.setUserId(123L);
@@ -51,7 +50,10 @@ class AccountServiceTest {
         savedAccount.setBalance(1000);
         savedAccount.setAccountNumber("0000000123");
 
-        CreateAccountResponse expectedResponse = new CreateAccountResponse();
+        CreateAccountResponse expectedResponse = new CreateAccountResponse(
+                "0000000123",
+                1000
+        );
 
         when(accountRepository.save(any(Account.class))).thenReturn(savedAccount);
         when(accountMapper.accountToCreateAccountResponse(savedAccount)).thenReturn(expectedResponse);
@@ -68,11 +70,13 @@ class AccountServiceTest {
     @Test
     void shouldReturnAccountsForUser() {
         // given
-        GetMyAccountsRequest request = new GetMyAccountsRequest();
-        request.setUserId(123L);
+        GetMyAccountsRequest request = new GetMyAccountsRequest(123L);
 
         List<Account> accounts = List.of(new Account(), new Account());
-        List<AccountDisplayDto> dtoList = List.of(new AccountDisplayDto(), new AccountDisplayDto());
+        List<AccountDisplayDto> dtoList = List.of(
+                new AccountDisplayDto("1111111111", 1000),
+                new AccountDisplayDto("2222222222", 2000)
+        );
 
         when(accountRepository.findAllByUserId(123L)).thenReturn(accounts);
         when(accountMapper.accountsToAccountDisplayDtos(accounts)).thenReturn(dtoList);
@@ -81,7 +85,7 @@ class AccountServiceTest {
         GetMyAccountsResponse response = accountService.getAccountsByUserId(request);
 
         // then
-        assertEquals(dtoList, response.getAccounts());
+        assertEquals(dtoList, response.accounts());
         verify(accountRepository).findAllByUserId(123L);
         verify(accountMapper).accountsToAccountDisplayDtos(accounts);
     }
@@ -89,15 +93,20 @@ class AccountServiceTest {
     @Test
     void shouldReturnAccountDetailsIfUserIsOwner() {
         // given
-        GetAccountDetailsRequest request = new GetAccountDetailsRequest();
-        request.setAccountNumber("1234567890");
-        request.setUserId(123L);
+        GetAccountDetailsRequest request = new GetAccountDetailsRequest(123L, "1234567890");
 
         Account account = new Account();
         account.setAccountNumber("1234567890");
         account.setUserId(123L);
+        account.setBalance(1500);
 
-        AccountDetailsDisplayDto expectedDto = new AccountDetailsDisplayDto();
+        AccountDetailsDisplayDto expectedDto = new AccountDetailsDisplayDto(
+                1500,
+                "1234567890",
+                123L,
+                account.getCreatedAt(),
+                account.getUpdatedAt()
+        );
 
         when(accountRepository.findByAccountNumber("1234567890")).thenReturn(Optional.of(account));
         when(accountMapper.accountToAccountDetailsDisplayDto(account)).thenReturn(expectedDto);
@@ -107,16 +116,22 @@ class AccountServiceTest {
 
         // then
         assertEquals(expectedDto, result);
+
+        assertEquals("1234567890", result.accountNumber());
+        assertEquals(1500, result.balance());
+        assertEquals(123L, result.userId());
+
         verify(accountRepository).findByAccountNumber("1234567890");
         verify(accountMapper).accountToAccountDetailsDisplayDto(account);
+
+        assertEquals(123L, request.userId());
+        assertEquals("1234567890", request.accountNumber());
     }
 
     @Test
     void shouldThrowPermissionDeniedIfUserIsNotOwner() {
         // given
-        GetAccountDetailsRequest request = new GetAccountDetailsRequest();
-        request.setAccountNumber("1234567890");
-        request.setUserId(123L);
+        GetAccountDetailsRequest request = new GetAccountDetailsRequest(123L, "1234567890");
 
         Account account = new Account();
         account.setAccountNumber("1234567890");

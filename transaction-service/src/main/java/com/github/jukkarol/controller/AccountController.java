@@ -7,6 +7,7 @@ import com.github.jukkarol.dto.accountDto.request.GetAccountDetailsRequest;
 import com.github.jukkarol.dto.accountDto.request.GetMyAccountsRequest;
 import com.github.jukkarol.dto.accountDto.response.CreateAccountResponse;
 import com.github.jukkarol.dto.accountDto.response.GetMyAccountsResponse;
+import com.github.jukkarol.exception.PermissionDeniedException;
 import com.github.jukkarol.service.AccountService;
 import com.github.jukkarol.service.JwtService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,15 +50,18 @@ public class AccountController {
             ),
     })
     public ResponseEntity<CreateAccountResponse> createAccount() {
-        CreateAccountRequest request = new CreateAccountRequest();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication instanceof JwtAuthenticationToken jwtAuth) {
             Long userId = jwtAuth.getUserId();
-            request.setUserId(userId);
+
+            CreateAccountRequest request = new CreateAccountRequest(userId);
+            CreateAccountResponse response = accountService.createAccount(request);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         }
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(accountService.createAccount(request));
+        throw new PermissionDeniedException();
     }
 
     @GetMapping
@@ -76,15 +80,18 @@ public class AccountController {
             ),
     })
     public ResponseEntity<GetMyAccountsResponse> getMyAccounts() {
-        GetMyAccountsRequest request = new GetMyAccountsRequest();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication instanceof JwtAuthenticationToken jwtAuth) {
             Long userId = jwtAuth.getUserId();
-            request.setUserId(userId);
+
+            GetMyAccountsRequest request = new GetMyAccountsRequest(userId);
+            GetMyAccountsResponse response = accountService.getAccountsByUserId(request);
+
+            return ResponseEntity.ok(response);
         }
 
-        return ResponseEntity.ok(accountService.getAccountsByUserId(request));
+        throw new PermissionDeniedException();
     }
 
     @GetMapping("{accountNumber}")
@@ -124,16 +131,18 @@ public class AccountController {
             ),
     })
     public ResponseEntity<AccountDetailsDisplayDto> getAccountDetails(@PathVariable @Valid @Size(min=10, max=10) @NotEmpty String accountNumber) {
-        GetAccountDetailsRequest request = new GetAccountDetailsRequest();
-        request.setAccountNumber(accountNumber);
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
 
         if (authentication instanceof JwtAuthenticationToken jwtAuth) {
             Long userId = jwtAuth.getUserId();
-            request.setUserId(userId);
+
+            GetAccountDetailsRequest request = new GetAccountDetailsRequest(userId, accountNumber);
+            AccountDetailsDisplayDto response = accountService.getAccountByAccountNumber(request);
+
+            return ResponseEntity.ok(response);
         }
 
-        return ResponseEntity.ok(accountService.getAccountByAccountNumber(request));
+        throw new PermissionDeniedException();
     }
 }

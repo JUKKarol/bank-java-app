@@ -1,16 +1,7 @@
 package com.github.jukkarol.dto.accountDto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+public record CreateAccountResponse(
+        String accountNumber,
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class CreateAccountResponse {
-    private String accountNumber;
-
-    private Integer  balance;
-}
+        Integer  balance
+) { }

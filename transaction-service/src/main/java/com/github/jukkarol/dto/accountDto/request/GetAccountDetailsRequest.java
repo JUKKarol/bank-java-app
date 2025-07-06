@@ -1,18 +1,14 @@
 package com.github.jukkarol.dto.accountDto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class GetAccountDetailsRequest {
-    @JsonIgnore
-    private Long userId;
+public record GetAccountDetailsRequest(
+        @JsonIgnore
+        Long userId,
 
-    private String accountNumber;
-}
+        @Size(min=10, max=10)
+        @NotEmpty
+        String accountNumber
+) { }

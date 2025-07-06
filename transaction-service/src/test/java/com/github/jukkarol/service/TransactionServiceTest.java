@@ -54,11 +54,7 @@ class TransactionServiceTest {
         toAccount.setUserId(2L);
         toAccount.setBalance(500);
 
-        request = new MakeTransactionRequest();
-        request.setFromAccountNumber("1234567890");
-        request.setToAccountNumber("0987654321");
-        request.setUserId(1L);
-        request.setAmount(300);
+        request = new MakeTransactionRequest(1L, "1234567890", "0987654321", 300);
     }
 
     @Test
@@ -71,8 +67,8 @@ class TransactionServiceTest {
 
         assertEquals(700, fromAccount.getBalance());
         assertEquals(800, toAccount.getBalance());
-        assertEquals(300, response.getAmount());
-        assertEquals(700, response.getBalanceAfterTransaction());
+        assertEquals(300, response.amount());
+        assertEquals(700, response.balanceAfterTransaction());
 
         verify(accountRepository).save(fromAccount);
         verify(accountRepository).save(toAccount);

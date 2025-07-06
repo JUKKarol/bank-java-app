@@ -1,24 +1,15 @@
 package com.github.jukkarol.dto.accountDto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class AccountDetailsDisplayDto {
-    private Integer balance;
+public record AccountDetailsDisplayDto(
+         Integer balance,
 
-    private String accountNumber;
+         String accountNumber,
 
-    private Long userId;
+         Long userId,
 
-    private LocalDateTime createdAt;
+         LocalDateTime createdAt,
 
-    private LocalDateTime updatedAt;
-}
+         LocalDateTime updatedAt
+) { }

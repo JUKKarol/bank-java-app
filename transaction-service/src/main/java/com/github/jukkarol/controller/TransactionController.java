@@ -5,6 +5,7 @@ import com.github.jukkarol.dto.transactionDto.request.GetAccountTransactionsRequ
 import com.github.jukkarol.dto.transactionDto.request.MakeTransactionRequest;
 import com.github.jukkarol.dto.transactionDto.response.GetAccountTransactionsResponse;
 import com.github.jukkarol.dto.transactionDto.response.MakeTransactionResponse;
+import com.github.jukkarol.exception.PermissionDeniedException;
 import com.github.jukkarol.service.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -68,12 +69,16 @@ public class TransactionController {
 
         if (authentication instanceof JwtAuthenticationToken jwtAuth) {
             Long userId = jwtAuth.getUserId();
-            request.setUserId(userId);
+
+            MakeTransactionRequest processedRequest = new MakeTransactionRequest(
+                    userId, request.fromAccountNumber(), request.toAccountNumber(), request.amount());
+
+            MakeTransactionResponse response = transactionService.makeTransfer(processedRequest);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         }
 
-        MakeTransactionResponse response = transactionService.makeTransfer(request);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        throw new PermissionDeniedException();
     }
 
     //ToDo: Add pagination
@@ -114,18 +119,17 @@ public class TransactionController {
             )
     })
     public ResponseEntity<GetAccountTransactionsResponse> getAccountTransactions(@PathVariable @Valid @Size(min=10, max=10) @NotEmpty String accountNumber) {
-        GetAccountTransactionsRequest request = new GetAccountTransactionsRequest();
-        request.setAccountNumber(accountNumber);
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication instanceof JwtAuthenticationToken jwtAuth) {
             Long userId = jwtAuth.getUserId();
-            request.setUserId(userId);
+
+            GetAccountTransactionsRequest request = new GetAccountTransactionsRequest(userId, accountNumber);
+            GetAccountTransactionsResponse response = transactionService.getAccountTransactions(request);
+
+            return ResponseEntity.ok(response);
         }
 
-        GetAccountTransactionsResponse response = transactionService.getAccountTransactions(request);
-
-        return ResponseEntity.ok(response);
+        throw new PermissionDeniedException();
     }
 }

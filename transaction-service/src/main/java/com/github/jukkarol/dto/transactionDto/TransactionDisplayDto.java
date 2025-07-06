@@ -1,24 +1,15 @@
 package com.github.jukkarol.dto.transactionDto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class TransactionDisplayDto {
-    private Integer amount;
+public record TransactionDisplayDto (
+    Integer amount,
 
-    private Integer balanceAfterTransaction;
+    Integer balanceAfterTransaction,
 
-    private String fromAccountNumber;
+    String fromAccountNumber,
 
-    private String toAccountNumber;
+    String toAccountNumber,
 
-    private LocalDateTime createdAt;
-}
+    LocalDateTime createdAt
+){}

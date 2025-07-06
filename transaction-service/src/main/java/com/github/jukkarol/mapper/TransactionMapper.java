@@ -15,19 +15,16 @@ public interface TransactionMapper {
     TransactionDisplayDto transactionToTransactionDisplayDto(Transaction transaction);
 
     default TransactionDisplayDto transactionToTransactionDisplayDto(Transaction transaction, String accountNumber) {
-        TransactionDisplayDto dto = new TransactionDisplayDto();
-        dto.setAmount(transaction.getAmount());
-        dto.setFromAccountNumber(transaction.getFromAccountNumber());
-        dto.setToAccountNumber(transaction.getToAccountNumber());
-        dto.setCreatedAt(transaction.getCreatedAt());
+        Integer balanceAfterTransaction;
 
         if (accountNumber.equals(transaction.getFromAccountNumber())) {
-            dto.setBalanceAfterTransaction(transaction.getFromAccountBalanceAfterTransaction());
+            balanceAfterTransaction = transaction.getFromAccountBalanceAfterTransaction();
         } else {
-            dto.setBalanceAfterTransaction(transaction.getToAccountBalanceAfterTransaction());
+            balanceAfterTransaction = transaction.getToAccountBalanceAfterTransaction();
         }
 
-        return dto;
+        return new TransactionDisplayDto(
+                transaction.getAmount(), balanceAfterTransaction, transaction.getFromAccountNumber(), transaction.getToAccountNumber(), transaction.getCreatedAt());
     }
 
     default List<TransactionDisplayDto> transactionsToTransactionDisplayDtos(List<Transaction> transactions, String accountNumber) {
