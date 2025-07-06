@@ -7,6 +7,7 @@ import com.github.jukkarol.dto.roleDto.request.GetRolesRequest;
 import com.github.jukkarol.dto.roleDto.response.CreateRoleResponse;
 import com.github.jukkarol.dto.roleDto.response.DeleteRoleResponse;
 import com.github.jukkarol.dto.roleDto.response.GetRolesResponse;
+import com.github.jukkarol.exception.PermissionDeniedException;
 import com.github.jukkarol.service.AuthenticationService;
 import com.github.jukkarol.service.JwtServiceExtended;
 import com.github.jukkarol.service.RoleService;
@@ -18,6 +19,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.PermissionDeniedDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -126,11 +128,13 @@ public class RoleController {
 
         if (authentication instanceof JwtAuthenticationToken jwtAuth) {
             Long userId = jwtAuth.getUserId();
-            request.setUserId(userId);
+
+            GetRolesRequest processedRequest = new GetRolesRequest(userId);
+            GetRolesResponse response = roleService.getUserRoles(processedRequest);
+
+            return ResponseEntity.ok(response);
         }
 
-        GetRolesResponse response = roleService.getUserRoles(request);
-
-        return ResponseEntity.ok(response);
+        throw new PermissionDeniedException();
     }
 }

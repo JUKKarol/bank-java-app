@@ -1,18 +1,9 @@
 package com.github.jukkarol.dto.roleDto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.util.Set;
 
-import java.util.List;
+public record GetRolesResponse(
+        Long userId,
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class GetRolesResponse {
-    private Long userId;
-
-    private List<String> roles;
-}
+        Set<String> roles
+) { }

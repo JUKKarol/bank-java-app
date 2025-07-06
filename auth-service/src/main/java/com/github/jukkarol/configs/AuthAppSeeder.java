@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 @Configuration
 @RequiredArgsConstructor
@@ -42,14 +43,14 @@ public class AuthAppSeeder implements ApplicationRunner {
         user1.setName("Admin User");
         user1.setEmail("admin@example.com");
         user1.setPassword(passwordEncoder.encode("password123"));
-        user1.setRoles(List.of("ROLE_ADMIN"));
+        user1.setRoles(Set.of("ROLE_ADMIN"));
         users.add(user1);
 
         User user2 = new User();
         user2.setName("ATM");
         user2.setEmail("atm@example.com");
         user2.setPassword(passwordEncoder.encode("password123"));
-        user2.setRoles(List.of("ROLE_ATM"));
+        user2.setRoles(Set.of("ROLE_ATM"));
         users.add(user2);
 
         User user3 = new User();

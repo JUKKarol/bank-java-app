@@ -74,6 +74,12 @@ public class GlobalExceptionHandler {
         return errors;
     }
 
+    @ExceptionHandler(PermissionDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public Map<String, String> handlePermissionDenied(PermissionDeniedException ex) {
+        return Map.of("error", ex.getMessage());
+    }
+
     @ExceptionHandler(ConflictException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public Map<String, String> handleConflictException(Exception ex) {

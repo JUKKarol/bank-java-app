@@ -13,6 +13,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 @AllArgsConstructor
 @Service
@@ -20,20 +22,14 @@ public class RoleService {
     private final UserRepository userRepository;
 
     public CreateRoleResponse createUserRole(CreateRoleRequest request){
-        User user = userRepository.findByEmail(request.getUserEmail())
-                .orElseThrow(() -> new NotFoundException(User.class.getSimpleName(), request.getUserEmail()));
+        User user = userRepository.findByEmail(request.userEmail())
+                .orElseThrow(() -> new NotFoundException(User.class.getSimpleName(), request.userEmail()));
 
-        request.setRole(request.getRole().toUpperCase());
-        if(!request.getRole().startsWith("ROLE_")){
-            request.setRole("ROLE_" + request.getRole());
-        }
+        String normalizedRole = standardize(request.role());
 
-        List<String> userRoles = user.getRoles();
-
-        if(!userRoles.contains(request.getRole()))
+        if(!user.getRoles().contains(normalizedRole))
         {
-            userRoles.add(request.getRole());
-            user.setRoles(userRoles);
+            user.getRoles().add(normalizedRole);
             userRepository.save(user);
         }
 
@@ -41,35 +37,33 @@ public class RoleService {
     }
 
     public DeleteRoleResponse deleteUserRole(DeleteRoleRequest request){
-        User user = userRepository.findByEmail(request.getUserEmail())
-                .orElseThrow(() -> new NotFoundException(User.class.getSimpleName(), request.getUserEmail()));
+        User user = userRepository.findByEmail(request.userEmail())
+                .orElseThrow(() -> new NotFoundException(User.class.getSimpleName(), request.userEmail()));
 
-        request.setRole(request.getRole().toUpperCase());
-        if(!request.getRole().startsWith("ROLE_")){
-            request.setRole("ROLE_" + request.getRole());
+        String normalizedRole = standardize(request.role());
+
+        Set<String> roles = user.getRoles();
+
+        if (!roles.remove(normalizedRole)) {
+            throw new NotFoundException("Role", normalizedRole);
         }
 
-        List<String> userRoles = user.getRoles();
+        userRepository.save(user);
 
-        if(userRoles.contains(request.getRole()))
-        {
-            userRoles.remove(request.getRole());
-            user.setRoles(userRoles);
-            userRepository.save(user);
-        }
-        else
-        {
-            throw new NotFoundException("Role", request.getRole());
-        }
-
-        return new DeleteRoleResponse(user.getId(), user.getRoles());
+        return new DeleteRoleResponse(user.getId(), roles);
     }
 
     public GetRolesResponse getUserRoles(GetRolesRequest request){
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new NotFoundException(User.class.getSimpleName(), request.getUserId().toString()));
+        User user = userRepository.findById(request.userId())
+                .orElseThrow(() -> new NotFoundException(User.class.getSimpleName(), request.userId().toString()));
 
         return new GetRolesResponse(user.getId(), user.getRoles());
+    }
+
+    private String standardize(String raw) {
+        String upper = raw.trim().toUpperCase(Locale.ROOT);
+        return upper.startsWith("ROLE_") ? upper
+                : "ROLE_" + upper;
     }
 }
 
