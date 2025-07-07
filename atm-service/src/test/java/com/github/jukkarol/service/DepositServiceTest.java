@@ -36,17 +36,13 @@ class DepositServiceTest {
     @Test
     void makeDeposit_shouldSaveDepositAndSendKafkaEvent() {
         // given
-        MakeDepositRequest request = new MakeDepositRequest();
-        request.setAccountNumber("123456");
-        request.setAmount(100);
+        MakeDepositRequest request = new MakeDepositRequest(100, "123456");
 
         Deposit deposit = new Deposit();
         deposit.setAccountNumber("123456");
         deposit.setAmount(100);
 
-        MakeDepositResponse response = new MakeDepositResponse();
-        response.setAccountNumber("123456");
-        response.setAmount(100);
+        MakeDepositResponse response = new MakeDepositResponse(100, "123456");
 
         when(depositMapper.makeDepositRequestToDeposit(request)).thenReturn(deposit);
         when(depositMapper.depositToMakeDepositResponse(deposit)).thenReturn(response);
@@ -57,14 +53,14 @@ class DepositServiceTest {
         // then
         verify(depositMapper).makeDepositRequestToDeposit(request);
         verify(kafkaTemplate).send(eq("deposit-requests"), argThat(event ->
-                event.getAccountNumber().equals("123456") && event.getAmount().equals(100)
+                event.accountNumber().equals("123456") && event.amount().equals(100)
         ));
         verify(depositRepository).save(deposit);
         verify(depositMapper).depositToMakeDepositResponse(deposit);
 
         assertNotNull(actualResponse);
-        assertEquals("123456", actualResponse.getAccountNumber());
-        assertEquals(100, actualResponse.getAmount());
+        assertEquals("123456", actualResponse.accountNumber());
+        assertEquals(100, actualResponse.amount());
     }
 
     @Test
@@ -78,7 +74,7 @@ class DepositServiceTest {
 
         // then
         verify(kafkaTemplate).send(eq("deposit-requests"), argThat(event ->
-                event.getAccountNumber().equals(accountNumber) && event.getAmount().equals(amount)
+                event.accountNumber().equals(accountNumber) && event.amount().equals(amount)
         ));
     }
 }

@@ -1,16 +1,7 @@
 package com.github.jukkarol.dto.depositDto.event;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+public record DepositRequestedEvent(
+        Integer amount,
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class DepositRequestedEvent {
-    private Integer amount;
-
-    private String accountNumber;
-}
+        String accountNumber
+) { }

@@ -27,9 +27,7 @@ public class DepositService {
     }
 
     public void requestDeposit(String accountNumber, Integer amount) {
-        DepositRequestedEvent event = new DepositRequestedEvent();
-        event.setAccountNumber(accountNumber);
-        event.setAmount(amount);
+        DepositRequestedEvent event = new DepositRequestedEvent(amount, accountNumber);
         kafkaTemplate.send("deposit-requests", event);
     }
 }

@@ -1,16 +1,7 @@
 package com.github.jukkarol.dto.depositDto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+public record MakeDepositResponse(
+        Integer amount,
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-public class MakeDepositResponse {
-    private Integer amount;
-
-    private String accountNumber;
-}
+        String accountNumber
+) { }
