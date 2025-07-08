@@ -8,6 +8,7 @@ import com.github.jukkarol.dto.transactionDto.response.MakeTransactionResponse;
 import com.github.jukkarol.exception.PermissionDeniedException;
 import com.github.jukkarol.service.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,6 +17,9 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -81,7 +85,6 @@ public class TransactionController {
         throw new PermissionDeniedException();
     }
 
-    //ToDo: Add pagination
     @GetMapping("{accountNumber}")
     @Operation(
             summary = "Get account transactions",
@@ -118,13 +121,32 @@ public class TransactionController {
                     )
             )
     })
-    public ResponseEntity<GetAccountTransactionsResponse> getAccountTransactions(@PathVariable @Valid @Size(min=10, max=10) @NotEmpty String accountNumber) {
+    public ResponseEntity<GetAccountTransactionsResponse> getAccountTransactions(
+            @Parameter(description = "Account number (10 digits)", example = "1234567890")
+            @PathVariable @Valid @Size(min=10, max=10) @NotEmpty String accountNumber,
+
+            @Parameter(description = "Page number (0 = first page)", example = "0")
+            @RequestParam(defaultValue = "0") int page,
+
+            @Parameter(description = "Field to sort by (e.g. createdAt, amount)", example = "createdAt")
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+
+            @Parameter(description = "Sorting direction: asc or desc", example = "desc")
+            @RequestParam(defaultValue = "desc") String sortDir
+    ) {
+        Sort sort = sortDir.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        int pageSize = 20;
+
+        Pageable pageable = PageRequest.of(page, pageSize, sort);
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication instanceof JwtAuthenticationToken jwtAuth) {
             Long userId = jwtAuth.getUserId();
 
-            GetAccountTransactionsRequest request = new GetAccountTransactionsRequest(userId, accountNumber);
+            GetAccountTransactionsRequest request = new GetAccountTransactionsRequest(userId, accountNumber, pageable);
             GetAccountTransactionsResponse response = transactionService.getAccountTransactions(request);
 
             return ResponseEntity.ok(response);

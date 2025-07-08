@@ -16,6 +16,7 @@ import com.github.jukkarol.model.Transaction;
 import com.github.jukkarol.repository.AccountRepository;
 import com.github.jukkarol.repository.TransactionRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -68,13 +69,22 @@ public class TransactionService {
             throw new PermissionDeniedException();
         }
 
-        List<Transaction> transactions = transactionRepository
-                .findAllByFromAccountNumberOrToAccountNumber(request.accountNumber(), request.accountNumber());
+        Page<Transaction> page = transactionRepository
+                .findAllByFromAccountNumberOrToAccountNumber(
+                        request.accountNumber(),
+                        request.accountNumber(),
+                        request.pageable());
 
         List<TransactionDisplayDto> transactionsDto = transactionMapper
-                .transactionsToTransactionDisplayDtos(transactions, request.accountNumber());
+                .transactionsToTransactionDisplayDtos(page.getContent(), request.accountNumber());
 
-        return new GetAccountTransactionsResponse(transactionsDto);
+        return new GetAccountTransactionsResponse(
+                transactionsDto,
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.getNumber(),
+                page.getSize()
+        );
     }
 
     public void makeDeposit(DepositRequestedEvent event)
