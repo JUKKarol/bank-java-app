@@ -65,4 +65,21 @@ public class GlobalExceptionHandler {
     public Map<String, String> handlePermissionDenied(PermissionDeniedException ex) {
         return Map.of("error", ex.getMessage());
     }
+
+    @ExceptionHandler(ConflictException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Map<String, String> handleConflictException(Exception ex) {
+        return Map.of(
+                "error", ex.getMessage()
+        );
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Map<String, String> handleUnknownException(Exception ex) {
+        return Map.of(
+                "error", ex.getMessage(),
+                "description", "Unknown internal server error"
+        );
+    }
 }
