@@ -74,6 +74,11 @@
             <version>2.0.1</version>
         </dependency>
         <dependency>
+            <groupId>com.github.jukkarol</groupId>
+            <artifactId>exception-lib</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>1.6.3</version>
