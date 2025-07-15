@@ -1,6 +1,6 @@
 package com.github.jukkarol.service;
 
-import com.github.jukkarol.dto.depositDto.event.DepositRequestedEvent;
+import com.github.jukkarol.dto.depositDto.event.DepositRequestEvent;
 import com.github.jukkarol.dto.depositDto.request.MakeDepositRequest;
 import com.github.jukkarol.dto.depositDto.response.MakeDepositResponse;
 import com.github.jukkarol.mapper.DepositMapper;
@@ -23,7 +23,7 @@ class DepositServiceTest {
     private DepositMapper depositMapper;
 
     @Mock
-    private KafkaTemplate<String, DepositRequestedEvent> kafkaTemplate;
+    private KafkaTemplate<String, DepositRequestEvent> kafkaTemplate;
 
     @InjectMocks
     private DepositService depositService;

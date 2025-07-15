@@ -1,6 +1,6 @@
 package com.github.jukkarol.service;
 
-import com.github.jukkarol.dto.depositDto.event.DepositRequestedEvent;
+import com.github.jukkarol.dto.depositDto.event.DepositRequestEvent;
 import com.github.jukkarol.dto.depositDto.request.MakeDepositRequest;
 import com.github.jukkarol.dto.depositDto.response.MakeDepositResponse;
 import com.github.jukkarol.mapper.DepositMapper;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class DepositService {
     private final DepositRepository depositRepository;
     private final DepositMapper depositMapper;
-    private final KafkaTemplate<String, DepositRequestedEvent> kafkaTemplate;
+    private final KafkaTemplate<String, DepositRequestEvent> kafkaTemplate;
 
     public MakeDepositResponse makeDeposit(MakeDepositRequest request)
     {
@@ -27,7 +27,7 @@ public class DepositService {
     }
 
     public void requestDeposit(String accountNumber, Integer amount) {
-        DepositRequestedEvent event = new DepositRequestedEvent(amount, accountNumber);
+        DepositRequestEvent event = new DepositRequestEvent(amount, accountNumber);
         kafkaTemplate.send("deposit-requests", event);
     }
 }

@@ -1,6 +1,6 @@
 package com.github.jukkarol.kafka.config;
 
-import com.github.jukkarol.dto.depositDto.event.DepositRequestedEvent;
+import com.github.jukkarol.dto.depositDto.event.DepositRequestEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +20,7 @@ public class DepositKafkaConsumerConfig {
     private String bootstrapServers;
 
     @Bean
-    public ConsumerFactory<String, DepositRequestedEvent> depositConsumerFactory() {
+    public ConsumerFactory<String, DepositRequestEvent> depositConsumerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         config.put(ConsumerConfig.GROUP_ID_CONFIG, "transaction-group");
@@ -31,8 +31,8 @@ public class DepositKafkaConsumerConfig {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, DepositRequestedEvent> KafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, DepositRequestedEvent> factory =
+    public ConcurrentKafkaListenerContainerFactory<String, DepositRequestEvent> KafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, DepositRequestEvent> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(depositConsumerFactory());
         return factory;

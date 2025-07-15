@@ -4,21 +4,13 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class MakeWithdrawalRequest {
-    @NotNull
-    @Positive
-    private Integer amount;
+public record MakeWithdrawalRequest(
+        @NotNull
+        @Positive
+        Integer amount,
 
-    @Size(min=10, max=10)
-    @NotEmpty
-    private String accountNumber;
-}
+        @Size(min = 10, max = 10)
+        @NotEmpty
+        String accountNumber
+) { }

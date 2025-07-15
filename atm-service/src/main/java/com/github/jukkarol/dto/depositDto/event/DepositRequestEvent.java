@@ -1,7 +1,7 @@
 package com.github.jukkarol.dto.depositDto.event;
 
-public record DepositRequestedEvent(
+public record DepositRequestEvent(
         Integer amount,
 
-        String  accountNumber
+        String accountNumber
 ) { }

@@ -1,6 +1,6 @@
 package com.github.jukkarol.kafka.listener;
 
-import com.github.jukkarol.dto.depositDto.event.DepositRequestedEvent;
+import com.github.jukkarol.dto.depositDto.event.DepositRequestEvent;
 import com.github.jukkarol.service.TransactionService;
 import lombok.AllArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -12,7 +12,7 @@ public class DepositRequestListener {
     private final TransactionService transactionService;
 
     @KafkaListener(topics = "deposit-requests", groupId = "transaction-group")
-    public void listen(DepositRequestedEvent event) {
+    public void listen(DepositRequestEvent event) {
         transactionService.makeDeposit(event);
     }
 }
