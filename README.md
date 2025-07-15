@@ -14,7 +14,6 @@ A **micro‑service banking demo** built with modern **Java 24** & **Spring Bo
 - Apache Kafka 3.9
 - JPA (Hibernate)
 - JUnit 5 & MockMvc
-- Testcontainers
 
 ---
 
@@ -23,6 +22,7 @@ A **micro‑service banking demo** built with modern **Java 24** & **Spring Bo
 ```
 api-gateway/         # Spring Cloud Gateway
 auth-lib/            # shared auth utilities (DTOs, JWT helpers)
+exception-lib/       # shared exceptions and exception handler
 auth-service/        # user auth & registration
 transaction-service/ # ledger & money transfers
 atm-service/         # cash‑in / cash‑out
@@ -63,6 +63,7 @@ Services are reachable once health checks pass:
 - Transactions: [http://localhost:8082/actuator/health](http://localhost:8082/actuator/health)
 - ATM: [http://localhost:8083/actuator/health](http://localhost:8083/actuator/health)
 - Kafka broker: `localhost:9092`
+- Zookeeper: `localhost:2181`
 - Postgres: `localhost:5432` (user `postgres` / password `P@ssw0rd`)
 
 ### Seeding demo users
