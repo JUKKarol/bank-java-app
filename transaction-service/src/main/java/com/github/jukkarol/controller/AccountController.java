@@ -28,7 +28,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("account")
+@RequestMapping("accounts")
 @Tag(name = "Authentication", description = "Authentication endpoints for basic user operations")
 public class AccountController {
     private final AccountService accountService;

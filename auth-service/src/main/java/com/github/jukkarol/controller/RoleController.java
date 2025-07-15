@@ -28,7 +28,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
-@RequestMapping("role")
+@RequestMapping("roles")
 @RestController
 @Tag(name = "Role", description = "Role endpoints for basic user operations")
 public class RoleController {
