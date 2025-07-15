@@ -23,6 +23,9 @@ public class Transaction {
     @Column(nullable = false)
     private Long id;
 
+    @Column(name = "transaction_id", unique = true)
+    private String transactionId;
+
     @Column(nullable = false)
     private Integer amount;
 

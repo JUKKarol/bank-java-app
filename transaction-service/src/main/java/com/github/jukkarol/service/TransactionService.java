@@ -1,12 +1,13 @@
 package com.github.jukkarol.service;
 
-import com.github.jukkarol.dto.depositDto.event.DepositRequestedEvent;
+import com.github.jukkarol.dto.depositDto.event.DepositRequestEvent;
 import com.github.jukkarol.dto.transactionDto.TransactionDisplayDto;
 import com.github.jukkarol.dto.transactionDto.request.GetAccountTransactionsRequest;
 import com.github.jukkarol.dto.transactionDto.request.MakeTransactionRequest;
 import com.github.jukkarol.dto.transactionDto.response.GetAccountTransactionsResponse;
 import com.github.jukkarol.dto.transactionDto.response.MakeTransactionResponse;
-import com.github.jukkarol.dto.withdrawalDto.event.WithdrawalRequestedEvent;
+import com.github.jukkarol.dto.withdrawalDto.event.request.WithdrawalRequestEvent;
+import com.github.jukkarol.dto.withdrawalDto.event.response.WithdrawalResponseEvent;
 import com.github.jukkarol.exception.InsufficientFundsException;
 import com.github.jukkarol.exception.NotFoundException;
 import com.github.jukkarol.exception.PermissionDeniedException;
@@ -16,11 +17,17 @@ import com.github.jukkarol.model.Transaction;
 import com.github.jukkarol.repository.AccountRepository;
 import com.github.jukkarol.repository.TransactionRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @AllArgsConstructor
 @Service
 public class TransactionService {
@@ -87,7 +94,7 @@ public class TransactionService {
         );
     }
 
-    public void makeDeposit(DepositRequestedEvent event)
+    public void makeDeposit(DepositRequestEvent event)
     {
         Account account = accountRepository.findByAccountNumber(event.accountNumber())
                 .orElseThrow(() -> new NotFoundException(Account.class.getSimpleName(), event.accountNumber()));
@@ -105,21 +112,75 @@ public class TransactionService {
         transactionRepository.save(transaction);
     }
 
-    public void makeWithdrawal(WithdrawalRequestedEvent event)
-    {
-        Account account = accountRepository.findByAccountNumber(event.accountNumber())
-                .orElseThrow(() -> new NotFoundException(Account.class.getSimpleName(), event.accountNumber()));
+    @KafkaListener(topics = "withdrawal-requests", groupId = "transaction-service-group")
+    @SendTo("withdrawal-responses")
+    @Transactional
+    public WithdrawalResponseEvent processWithdrawal(WithdrawalRequestEvent event) {
+        log.info("Processing withdrawal request: {}", event.transactionId());
 
-        account.setBalance(account.getBalance() - event.amount());
+        try {
+            Account account = accountRepository.findByAccountNumber(event.accountNumber())
+                    .orElseThrow(() -> new NotFoundException(Account.class.getSimpleName(), event.accountNumber()));
 
-        accountRepository.save(account);
+            log.info("Account found: {}, current balance: {}", event.accountNumber(), account.getBalance());
 
-        Transaction transaction = new Transaction();
-        transaction.setAmount(-Math.abs(event.amount()));
-        transaction.setToAccountBalanceAfterTransaction(account.getBalance());
-        transaction.setFromAccountNumber("ATM");
-        transaction.setToAccountNumber(event.accountNumber());
+            if (account.getBalance() < event.amount()) {
+                log.warn("Insufficient funds for transaction: {}. Required: {}, Available: {}",
+                        event.transactionId(), event.amount(), account.getBalance());
 
-        transactionRepository.save(transaction);
+                return new WithdrawalResponseEvent(
+                        event.transactionId(),
+                        false,
+                        "Insufficient funds. Available: " + account.getBalance() + ", Required: " + event.amount(),
+                        account.getBalance(),
+                        null
+                );
+            }
+
+            int newBalance = account.getBalance() - event.amount();
+            account.setBalance(newBalance);
+            Account savedAccount = accountRepository.save(account);
+
+            Transaction transaction = new Transaction();
+            transaction.setTransactionId(event.transactionId());
+            transaction.setAmount(-Math.abs(event.amount()));
+            transaction.setToAccountBalanceAfterTransaction(savedAccount.getBalance());
+            transaction.setFromAccountNumber("ATM");
+            transaction.setToAccountNumber(event.accountNumber());
+            transaction.setCreatedAt(LocalDateTime.now());
+
+            Transaction savedTransaction = transactionRepository.save(transaction);
+
+            log.info("Withdrawal completed successfully for transaction: {}. New balance: {}",
+                    event.transactionId(), newBalance);
+
+            return new WithdrawalResponseEvent(
+                    event.transactionId(),
+                    true,
+                    "Withdrawal completed successfully",
+                    newBalance,
+                    savedTransaction.getId()
+            );
+
+        } catch (NotFoundException e) {
+            log.error("Account not found for transaction: {}", event.transactionId());
+            return new WithdrawalResponseEvent(
+                    event.transactionId(),
+                    false,
+                    "Account not found: " + event.accountNumber(),
+                    0,
+                    null
+            );
+
+        } catch (Exception e) {
+            log.error("Unexpected error processing withdrawal for transaction: {}", event.transactionId(), e);
+            return new WithdrawalResponseEvent(
+                    event.transactionId(),
+                    false,
+                    "System error: " + e.getMessage(),
+                    0,
+                    null
+            );
+        }
     }
 }
