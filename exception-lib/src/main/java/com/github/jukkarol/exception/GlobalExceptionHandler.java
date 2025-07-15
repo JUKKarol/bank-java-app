@@ -131,4 +131,22 @@ public class GlobalExceptionHandler {
                 "description", "Unknown internal server error"
         );
     }
+
+    @ExceptionHandler(ServiceUnavailableException.class)
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    public Map<String, String> handleServiceUnavailable(ServiceUnavailableException ex) {
+        return Map.of(
+                "error", ex.getMessage(),
+                "type", "SERVICE_UNAVAILABLE"
+        );
+    }
+
+    @ExceptionHandler(SystemException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Map<String, String> handleSystemException(SystemException ex) {
+        return Map.of(
+                "error", ex.getMessage(),
+                "type", "SYSTEM_ERROR"
+        );
+    }
 }
