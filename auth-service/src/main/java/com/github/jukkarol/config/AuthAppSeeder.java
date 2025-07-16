@@ -1,7 +1,8 @@
-package com.github.jukkarol.configs;
+package com.github.jukkarol.config;
 
 import com.github.jukkarol.model.User;
 import com.github.jukkarol.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,7 @@ public class AuthAppSeeder implements ApplicationRunner {
         }
     }
 
+    @Transactional
     private void seedUsers(){
         List<User> users = new ArrayList<>();
 

@@ -1,4 +1,4 @@
-package com.github.jukkarol.configs;
+package com.github.jukkarol.config;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;

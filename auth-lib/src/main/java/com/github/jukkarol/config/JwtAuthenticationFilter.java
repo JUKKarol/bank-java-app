@@ -1,4 +1,4 @@
-package com.github.jukkarol.configs;
+package com.github.jukkarol.config;
 
 import com.github.jukkarol.service.JwtService;
 import jakarta.servlet.FilterChain;

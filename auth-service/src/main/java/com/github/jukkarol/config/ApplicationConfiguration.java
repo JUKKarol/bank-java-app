@@ -1,4 +1,4 @@
-package com.github.jukkarol.configs;
+package com.github.jukkarol.config;
 
 import com.github.jukkarol.repository.UserRepository;
 import lombok.AllArgsConstructor;
