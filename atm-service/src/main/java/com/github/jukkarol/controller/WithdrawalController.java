@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("withdrawal")
+@RequestMapping("withdrawals")
 @PreAuthorize("hasRole('ATM')")
 public class WithdrawalController {
     private final DepositService depositService;

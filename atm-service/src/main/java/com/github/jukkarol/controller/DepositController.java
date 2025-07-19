@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("deposit")
+@RequestMapping("deposits")
 @PreAuthorize("hasRole('ATM')")
 public class DepositController {
     private final DepositService depositService;
