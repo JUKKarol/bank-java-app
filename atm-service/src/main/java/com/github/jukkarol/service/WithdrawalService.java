@@ -89,7 +89,7 @@ public class WithdrawalService {
 
         } catch (InterruptedException e) {
             log.error("Interrupted while waiting for withdrawal response for transaction: {}", savedWithdrawal.getTransactionId());
-            Thread.currentThread().interrupt(); // Restore interrupted status
+            Thread.currentThread().interrupt();
             savedWithdrawal.setStatus(WithdrawalStatus.FAILED);
             savedWithdrawal.setRejectionReason("Operation interrupted");
             withdrawalRepository.save(savedWithdrawal);

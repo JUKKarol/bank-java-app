@@ -18,6 +18,7 @@ import com.github.jukkarol.repository.AccountRepository;
 import com.github.jukkarol.repository.TransactionRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @AllArgsConstructor
@@ -35,13 +37,11 @@ public class TransactionService {
     private final AccountRepository accountRepository;
     private final TransactionMapper transactionMapper;
 
-    public MakeTransactionResponse makeTransfer(MakeTransactionRequest request)
-    {
+    public MakeTransactionResponse makeTransfer(MakeTransactionRequest request) {
         Account fromAccount = accountRepository.findByAccountNumber(request.fromAccountNumber())
                 .orElseThrow(() -> new NotFoundException(Account.class.getSimpleName(), request.fromAccountNumber()));
 
-        if (!request.userId().equals(fromAccount.getUserId()))
-        {
+        if (!request.userId().equals(fromAccount.getUserId())) {
             throw new PermissionDeniedException();
         }
 
@@ -66,13 +66,11 @@ public class TransactionService {
         return new MakeTransactionResponse(fromAccount.getBalance(), request.amount());
     }
 
-    public GetAccountTransactionsResponse getAccountTransactions(GetAccountTransactionsRequest request)
-    {
+    public GetAccountTransactionsResponse getAccountTransactions(GetAccountTransactionsRequest request) {
         Account account = accountRepository.findByAccountNumber(request.accountNumber())
                 .orElseThrow(() -> new NotFoundException(Account.class.getSimpleName(), request.accountNumber()));
 
-        if (!request.userId().equals(account.getUserId()))
-        {
+        if (!request.userId().equals(account.getUserId())) {
             throw new PermissionDeniedException();
         }
 
@@ -94,8 +92,7 @@ public class TransactionService {
         );
     }
 
-    public void makeDeposit(DepositRequestEvent event)
-    {
+    public void makeDeposit(DepositRequestEvent event) {
         Account account = accountRepository.findByAccountNumber(event.accountNumber())
                 .orElseThrow(() -> new NotFoundException(Account.class.getSimpleName(), event.accountNumber()));
 
@@ -119,6 +116,22 @@ public class TransactionService {
         log.info("Processing withdrawal request: {}", event.transactionId());
 
         try {
+            Optional<Transaction> existingTransaction = transactionRepository.findByTransactionId(event.transactionId());
+            if (existingTransaction.isPresent()) {
+                log.info("Transaction already processed: {}", event.transactionId());
+
+                Account account = accountRepository.findByAccountNumber(event.accountNumber())
+                        .orElseThrow(() -> new NotFoundException(Account.class.getSimpleName(), event.accountNumber()));
+
+                return new WithdrawalResponseEvent(
+                        event.transactionId(),
+                        true,
+                        "Transaction already processed",
+                        account.getBalance(),
+                        existingTransaction.get().getId()
+                );
+            }
+
             Account account = accountRepository.findByAccountNumber(event.accountNumber())
                     .orElseThrow(() -> new NotFoundException(Account.class.getSimpleName(), event.accountNumber()));
 
@@ -162,6 +175,35 @@ public class TransactionService {
                     savedTransaction.getId()
             );
 
+        } catch (DataIntegrityViolationException e) {
+            if (e.getMessage().contains("uk6plyfbm3wy6ds7hongoml5xbk")) {
+                log.warn("Duplicate transaction detected: {}", event.transactionId());
+
+                try {
+                    Optional<Transaction> existingTransaction = transactionRepository.findByTransactionId(event.transactionId());
+                    Account account = accountRepository.findByAccountNumber(event.accountNumber())
+                            .orElseThrow(() -> new NotFoundException(Account.class.getSimpleName(), event.accountNumber()));
+
+                    return new WithdrawalResponseEvent(
+                            event.transactionId(),
+                            true,
+                            "Transaction already processed",
+                            account.getBalance(),
+                            existingTransaction.map(Transaction::getId).orElse(null)
+                    );
+                } catch (Exception innerException) {
+                    log.error("Error handling duplicate transaction: {}", event.transactionId(), innerException);
+                    return new WithdrawalResponseEvent(
+                            event.transactionId(),
+                            false,
+                            "Duplicate transaction handling error: " + innerException.getMessage(),
+                            0,
+                            null
+                    );
+                }
+            } else {
+                throw e;
+            }
         } catch (NotFoundException e) {
             log.error("Account not found for transaction: {}", event.transactionId());
             return new WithdrawalResponseEvent(
@@ -171,7 +213,6 @@ public class TransactionService {
                     0,
                     null
             );
-
         } catch (Exception e) {
             log.error("Unexpected error processing withdrawal for transaction: {}", event.transactionId(), e);
             return new WithdrawalResponseEvent(
