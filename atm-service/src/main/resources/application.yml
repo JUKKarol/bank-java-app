@@ -7,13 +7,19 @@ spring:
     username: postgres
     password: P@ssw0rd
     driver-class-name: org.postgresql.Driver
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
   kafka:
     bootstrap-servers: localhost:9092
 
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
 security:
