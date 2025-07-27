@@ -21,6 +21,15 @@ security:
     secret-key: yourbase64secretkeyyourbase64secretkeyyourbase64secretkeyyourbase64secretkey
     expiration-time: 3600000
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
 logging:
   level:
     org.springframework.security: DEBUG

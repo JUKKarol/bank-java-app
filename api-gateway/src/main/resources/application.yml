@@ -4,6 +4,16 @@ server:
 spring:
   application:
     name: api-gateway
+
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health,info,metrics
+    endpoint:
+      health:
+        show-details: always
+
   cloud:
     gateway:
       routes:
