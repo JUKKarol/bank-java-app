@@ -1,6 +1,6 @@
 package com.github.jukkarol.controller;
 
-import com.github.jukkarol.configs.JwtAuthenticationToken;
+import com.github.jukkarol.config.JwtAuthenticationToken;
 import com.github.jukkarol.dto.accountDto.AccountDetailsDisplayDto;
 import com.github.jukkarol.dto.accountDto.request.CreateAccountRequest;
 import com.github.jukkarol.dto.accountDto.request.GetAccountDetailsRequest;

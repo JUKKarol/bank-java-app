@@ -1,6 +1,6 @@
 package com.github.jukkarol.controller;
 
-import com.github.jukkarol.configs.JwtAuthenticationToken;
+import com.github.jukkarol.config.JwtAuthenticationToken;
 import com.github.jukkarol.dto.roleDto.request.CreateRoleRequest;
 import com.github.jukkarol.dto.roleDto.request.DeleteRoleRequest;
 import com.github.jukkarol.dto.roleDto.request.GetRolesRequest;

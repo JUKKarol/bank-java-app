@@ -73,7 +73,7 @@ public class POSTLoginTest {
                 }
                 """;
 
-        mockMvc.perform(post("/auth//login")
+        mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidJson))
                 .andExpect(status().isBadRequest());

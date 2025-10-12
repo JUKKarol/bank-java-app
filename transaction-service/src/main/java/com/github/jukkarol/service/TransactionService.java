@@ -37,6 +37,7 @@ public class TransactionService {
     private final AccountRepository accountRepository;
     private final TransactionMapper transactionMapper;
 
+    @Transactional
     public MakeTransactionResponse makeTransfer(MakeTransactionRequest request) {
         Account fromAccount = accountRepository.findByAccountNumber(request.fromAccountNumber())
                 .orElseThrow(() -> new NotFoundException(Account.class.getSimpleName(), request.fromAccountNumber()));

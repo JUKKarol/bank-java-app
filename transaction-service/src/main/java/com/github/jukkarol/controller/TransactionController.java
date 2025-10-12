@@ -1,6 +1,6 @@
 package com.github.jukkarol.controller;
 
-import com.github.jukkarol.configs.JwtAuthenticationToken;
+import com.github.jukkarol.config.JwtAuthenticationToken;
 import com.github.jukkarol.dto.transactionDto.request.GetAccountTransactionsRequest;
 import com.github.jukkarol.dto.transactionDto.request.MakeTransactionRequest;
 import com.github.jukkarol.dto.transactionDto.response.GetAccountTransactionsResponse;
