@@ -64,10 +64,12 @@ bank-java-app/
 
 Each microservice exposes its own OpenAPI documentation at `<service-host>/swagger-ui.html`. 
 
+http://localhost:8081/swagger-ui/index.html
+
 When running through the gateway:
-- Auth API docs: `http://localhost:8080/auth/swagger-ui.html`
-- Transaction API docs: `http://localhost:8080/transaction/swagger-ui.html`
-- ATM API docs: `http://localhost:8080/atm/swagger-ui.html`
+- Auth API docs: `http://localhost:8080/auth/swagger-ui/index.html`
+- Transaction API docs: `http://localhost:8080/transaction/swagger-ui/index.html`
+- ATM API docs: `http://localhost:8080/atm/swagger-ui/index.html`
 
 ---
 
