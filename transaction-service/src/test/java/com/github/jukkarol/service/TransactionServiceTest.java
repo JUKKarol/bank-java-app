@@ -21,6 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,14 +48,14 @@ class TransactionServiceTest {
         fromAccount = new Account();
         fromAccount.setAccountNumber("1234567890");
         fromAccount.setUserId(1L);
-        fromAccount.setBalance(1000);
+        fromAccount.setBalance(BigDecimal.valueOf(1000));
 
         toAccount = new Account();
         toAccount.setAccountNumber("0987654321");
         toAccount.setUserId(2L);
-        toAccount.setBalance(500);
+        toAccount.setBalance(BigDecimal.valueOf(500));
 
-        request = new MakeTransactionRequest(1L, "1234567890", "0987654321", 300);
+        request = new MakeTransactionRequest(1L, "1234567890", "0987654321", BigDecimal.valueOf(300));
     }
 
     @Test
@@ -65,10 +66,10 @@ class TransactionServiceTest {
 
         MakeTransactionResponse response = transactionService.makeTransfer(request);
 
-        assertEquals(700, fromAccount.getBalance());
-        assertEquals(800, toAccount.getBalance());
-        assertEquals(300, response.amount());
-        assertEquals(700, response.balanceAfterTransaction());
+        assertEquals(BigDecimal.valueOf(700), fromAccount.getBalance());
+        assertEquals(BigDecimal.valueOf(800), toAccount.getBalance());
+        assertEquals(BigDecimal.valueOf(300), response.amount());
+        assertEquals(BigDecimal.valueOf(700), response.balanceAfterTransaction());
 
         verify(accountRepository).save(fromAccount);
         verify(accountRepository).save(toAccount);
@@ -100,7 +101,7 @@ class TransactionServiceTest {
 
     @Test
     void shouldThrowInsufficientFundsIfNotEnoughBalance() {
-        fromAccount.setBalance(100);
+        fromAccount.setBalance(BigDecimal.valueOf(100));
         when(accountRepository.findByAccountNumber("1234567890")).thenReturn(Optional.of(fromAccount));
         when(accountRepository.findByAccountNumber("0987654321")).thenReturn(Optional.of(toAccount));
 

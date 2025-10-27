@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -27,12 +28,12 @@ public class Transaction {
     private String transactionId;
 
     @Column(nullable = false)
-    private Integer amount;
+    private BigDecimal amount;
 
-    private Integer fromAccountBalanceAfterTransaction;
+    private BigDecimal fromAccountBalanceAfterTransaction;
 
     @Column(nullable = false)
-    private Integer toAccountBalanceAfterTransaction;
+    private BigDecimal toAccountBalanceAfterTransaction;
 
     @Column(nullable = false, name = "from_account_number")
     private String fromAccountNumber;

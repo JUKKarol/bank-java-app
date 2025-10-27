@@ -1,6 +1,8 @@
 package com.github.jukkarol.dto.transactionDto.response;
 
+import java.math.BigDecimal;
+
 public record MakeTransactionResponse(
-         Integer balanceAfterTransaction,
-         Integer amount
+        BigDecimal balanceAfterTransaction,
+        BigDecimal  amount
 ) { }

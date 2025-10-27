@@ -1,11 +1,12 @@
 package com.github.jukkarol.dto.transactionDto;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record TransactionDisplayDto (
-    Integer amount,
+    BigDecimal amount,
 
-    Integer balanceAfterTransaction,
+    BigDecimal balanceAfterTransaction,
 
     String fromAccountNumber,
 

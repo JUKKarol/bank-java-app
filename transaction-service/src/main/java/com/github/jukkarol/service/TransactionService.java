@@ -25,6 +25,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -53,8 +54,8 @@ public class TransactionService {
             throw new InsufficientFundsException("Not enough funds.");
         }
 
-        fromAccount.setBalance(fromAccount.getBalance() - request.amount());
-        toAccount.setBalance(toAccount.getBalance() + request.amount());
+        fromAccount.setBalance(fromAccount.getBalance().subtract(request.amount()));
+        toAccount.setBalance(toAccount.getBalance().add(request.amount()));
 
         accountRepository.save(fromAccount);
         accountRepository.save(toAccount);
@@ -97,13 +98,13 @@ public class TransactionService {
         Account account = accountRepository.findByAccountNumber(event.accountNumber())
                 .orElseThrow(() -> new NotFoundException(Account.class.getSimpleName(), event.accountNumber()));
 
-        account.setBalance(account.getBalance() + event.amount());
+        account.setBalance(account.getBalance().add(event.amount()));
 
         accountRepository.save(account);
 
         Transaction transaction = new Transaction();
         transaction.setAmount(event.amount());
-        transaction.setToAccountBalanceAfterTransaction(account.getBalance() + event.amount());
+        transaction.setToAccountBalanceAfterTransaction(account.getBalance().add(event.amount()));
         transaction.setFromAccountNumber("ATM");
         transaction.setToAccountNumber(event.accountNumber());
 
@@ -138,7 +139,7 @@ public class TransactionService {
 
             log.info("Account found: {}, current balance: {}", event.accountNumber(), account.getBalance());
 
-            if (account.getBalance() < event.amount()) {
+            if (account.getBalance().compareTo(event.amount()) < 0) {
                 log.warn("Insufficient funds for transaction: {}. Required: {}, Available: {}",
                         event.transactionId(), event.amount(), account.getBalance());
 
@@ -151,13 +152,13 @@ public class TransactionService {
                 );
             }
 
-            int newBalance = account.getBalance() - event.amount();
+            BigDecimal newBalance = account.getBalance().subtract(event.amount());
             account.setBalance(newBalance);
             Account savedAccount = accountRepository.save(account);
 
             Transaction transaction = new Transaction();
             transaction.setTransactionId(event.transactionId());
-            transaction.setAmount(-Math.abs(event.amount()));
+            transaction.setAmount(event.amount().abs().negate());
             transaction.setToAccountBalanceAfterTransaction(savedAccount.getBalance());
             transaction.setFromAccountNumber("ATM");
             transaction.setToAccountNumber(event.accountNumber());
@@ -198,7 +199,7 @@ public class TransactionService {
                             event.transactionId(),
                             false,
                             "Duplicate transaction handling error: " + innerException.getMessage(),
-                            0,
+                            BigDecimal.valueOf(0),
                             null
                     );
                 }
@@ -211,7 +212,7 @@ public class TransactionService {
                     event.transactionId(),
                     false,
                     "Account not found: " + event.accountNumber(),
-                    0,
+                    BigDecimal.valueOf(0),
                     null
             );
         } catch (Exception e) {
@@ -220,7 +221,7 @@ public class TransactionService {
                     event.transactionId(),
                     false,
                     "System error: " + e.getMessage(),
-                    0,
+                    BigDecimal.valueOf(0),
                     null
             );
         }

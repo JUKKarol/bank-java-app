@@ -15,6 +15,7 @@ import com.github.jukkarol.repository.AccountRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Random;
 
@@ -30,7 +31,7 @@ public class AccountService {
 
         Account account = new Account();
         account.setUserId(request.userId());
-        account.setBalance(1000);
+        account.setBalance(BigDecimal.valueOf(1000));
         String accountNumber = String.format("%010d", generator.nextLong(1_000_000_0000L));
         account.setAccountNumber(accountNumber);
 

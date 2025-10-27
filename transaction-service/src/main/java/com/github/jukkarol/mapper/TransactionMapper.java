@@ -7,6 +7,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
@@ -15,7 +16,7 @@ public interface TransactionMapper {
     TransactionDisplayDto transactionToTransactionDisplayDto(Transaction transaction);
 
     default TransactionDisplayDto transactionToTransactionDisplayDto(Transaction transaction, String accountNumber) {
-        Integer balanceAfterTransaction;
+        BigDecimal balanceAfterTransaction;
 
         if (accountNumber.equals(transaction.getFromAccountNumber())) {
             balanceAfterTransaction = transaction.getFromAccountBalanceAfterTransaction();

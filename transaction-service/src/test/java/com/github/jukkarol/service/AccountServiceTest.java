@@ -21,6 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,16 +44,16 @@ class AccountServiceTest {
 
         Account accountToSave = new Account();
         accountToSave.setUserId(123L);
-        accountToSave.setBalance(1000);
+        accountToSave.setBalance(BigDecimal.valueOf(1000));
 
         Account savedAccount = new Account();
         savedAccount.setUserId(123L);
-        savedAccount.setBalance(1000);
+        savedAccount.setBalance(BigDecimal.valueOf(1000));
         savedAccount.setAccountNumber("0000000123");
 
         CreateAccountResponse expectedResponse = new CreateAccountResponse(
                 "0000000123",
-                1000
+                BigDecimal.valueOf(1000)
         );
 
         when(accountRepository.save(any(Account.class))).thenReturn(savedAccount);
@@ -74,8 +75,8 @@ class AccountServiceTest {
 
         List<Account> accounts = List.of(new Account(), new Account());
         List<AccountDisplayDto> dtoList = List.of(
-                new AccountDisplayDto("1111111111", 1000),
-                new AccountDisplayDto("2222222222", 2000)
+                new AccountDisplayDto("1111111111", BigDecimal.valueOf(1000)),
+                new AccountDisplayDto("2222222222", BigDecimal.valueOf(2000))
         );
 
         when(accountRepository.findAllByUserId(123L)).thenReturn(accounts);
@@ -98,10 +99,10 @@ class AccountServiceTest {
         Account account = new Account();
         account.setAccountNumber("1234567890");
         account.setUserId(123L);
-        account.setBalance(1500);
+        account.setBalance(BigDecimal.valueOf(1500));
 
         AccountDetailsDisplayDto expectedDto = new AccountDetailsDisplayDto(
-                1500,
+                BigDecimal.valueOf(1500),
                 "1234567890",
                 123L,
                 account.getCreatedAt(),
@@ -118,7 +119,7 @@ class AccountServiceTest {
         assertEquals(expectedDto, result);
 
         assertEquals("1234567890", result.accountNumber());
-        assertEquals(1500, result.balance());
+        assertEquals(BigDecimal.valueOf(1500), result.balance());
         assertEquals(123L, result.userId());
 
         verify(accountRepository).findByAccountNumber("1234567890");
