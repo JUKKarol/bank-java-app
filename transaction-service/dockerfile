@@ -1,6 +1,6 @@
-# transaction-service/Dockerfile
-FROM openjdk:24-jdk-slim
+# credit-service/Dockerfile
+FROM openjdk:25-jdk-slim
 VOLUME /tmp
-ARG JAR_FILE=transaction-service/target/*.jar
+ARG JAR_FILE=credit-service/target/*.jar
 COPY ${JAR_FILE} app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]

@@ -1,5 +1,5 @@
 # auth-service/Dockerfile
-FROM openjdk:24-jdk-slim
+FROM openjdk:25-jdk-slim
 VOLUME /tmp
 ARG JAR_FILE=auth-service/target/*.jar
 COPY ${JAR_FILE} app.jar
