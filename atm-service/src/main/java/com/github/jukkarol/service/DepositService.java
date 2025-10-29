@@ -10,6 +10,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 @AllArgsConstructor
 @Service
 public class DepositService {
@@ -26,7 +28,7 @@ public class DepositService {
         return depositMapper.depositToMakeDepositResponse(deposit);
     }
 
-    public void requestDeposit(String accountNumber, Integer amount) {
+    public void requestDeposit(String accountNumber, BigDecimal amount) {
         DepositRequestEvent event = new DepositRequestEvent(amount, accountNumber);
         kafkaTemplate.send("deposit-requests", event);
     }

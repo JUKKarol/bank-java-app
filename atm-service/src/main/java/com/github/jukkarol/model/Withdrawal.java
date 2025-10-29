@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -25,7 +26,7 @@ public class Withdrawal {
     private Long id;
 
     @Column(nullable = false)
-    private Integer amount;
+    private BigDecimal amount;
 
     @Column(nullable = false)
     private String accountNumber;
@@ -41,7 +42,7 @@ public class Withdrawal {
     private String rejectionReason;
 
     @Column(name = "final_balance")
-    private Integer finalBalance;
+    private BigDecimal finalBalance;
 
     @Column(name = "transaction_db_id")
     private Long transactionDbId;

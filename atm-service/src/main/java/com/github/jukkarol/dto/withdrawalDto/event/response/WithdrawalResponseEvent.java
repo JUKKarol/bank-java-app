@@ -1,9 +1,11 @@
 package com.github.jukkarol.dto.withdrawalDto.event.response;
 
+import java.math.BigDecimal;
+
 public record WithdrawalResponseEvent(
         String transactionId,
         boolean success,
         String message,
-        Integer remainingBalance,
+        BigDecimal remainingBalance,
         Long transactionDbId
 ) {}

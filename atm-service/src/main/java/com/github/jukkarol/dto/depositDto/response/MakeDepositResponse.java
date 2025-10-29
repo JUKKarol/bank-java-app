@@ -1,7 +1,9 @@
 package com.github.jukkarol.dto.depositDto.response;
 
+import java.math.BigDecimal;
+
 public record MakeDepositResponse(
-        Integer amount,
+        BigDecimal amount,
 
         String accountNumber
 ) { }

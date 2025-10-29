@@ -1,7 +1,9 @@
 package com.github.jukkarol.dto.withdrawalDto.response;
 
+import java.math.BigDecimal;
+
 public record MakeWithdrawalResponse(
-        Integer amount,
+        BigDecimal amount,
 
         String accountNumber
 ) { }

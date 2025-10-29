@@ -56,18 +56,18 @@ class WithdrawalServiceTest {
     @Test
     void makeWithdrawal_shouldSaveWithdrawalAndSendKafkaEvent() throws Exception {
         // given
-        MakeWithdrawalRequest request = new MakeWithdrawalRequest(100, "1234567890");
+        MakeWithdrawalRequest request = new MakeWithdrawalRequest(BigDecimal.valueOf(100), "1234567890");
 
         Withdrawal withdrawal = new Withdrawal();
         withdrawal.setAccountNumber("1234567890");
-        withdrawal.setAmount(100);
+        withdrawal.setAmount(BigDecimal.valueOf(100));
 
         MakeWithdrawalResponse expectedResponse = new MakeWithdrawalResponse(
-                100, "1234567890"
+                BigDecimal.valueOf(100), "1234567890"
         );
 
         WithdrawalResponseEvent successResponse = new WithdrawalResponseEvent(
-                "transaction-id", true, "Success", 400, 123342L
+                "transaction-id", true, "Success", BigDecimal.valueOf(400), 123342L
         );
 
         when(withdrawalMapper.makeWithdrawalRequestToWithdrawal(request)).thenReturn(withdrawal);
@@ -88,13 +88,13 @@ class WithdrawalServiceTest {
 
         assertNotNull(actualResponse);
         assertEquals("1234567890", actualResponse.accountNumber());
-        assertEquals(100, actualResponse.amount());
+        assertEquals(BigDecimal.valueOf(100), actualResponse.amount());
     }
 
     @Test
     void makeWithdrawal_InsufficientFunds_shouldThrowException() throws Exception {
         // given
-        MakeWithdrawalRequest request = new MakeWithdrawalRequest(100, "1234567890");
+        MakeWithdrawalRequest request = new MakeWithdrawalRequest(BigDecimal.valueOf(100), "1234567890");
 
         Withdrawal withdrawal = new Withdrawal();
         WithdrawalResponseEvent failureResponse = new WithdrawalResponseEvent(
@@ -115,7 +115,7 @@ class WithdrawalServiceTest {
     @Test
     void makeWithdrawal_TimeoutException_shouldThrowServiceUnavailable() throws Exception {
         // given
-        MakeWithdrawalRequest request = new MakeWithdrawalRequest(100, "1234567890");
+        MakeWithdrawalRequest request = new MakeWithdrawalRequest(BigDecimal.valueOf(100), "1234567890");
 
         Withdrawal withdrawal = new Withdrawal();
 

@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.kafka.core.KafkaTemplate;
 
+import java.math.BigDecimal;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -36,13 +38,13 @@ class DepositServiceTest {
     @Test
     void makeDeposit_shouldSaveDepositAndSendKafkaEvent() {
         // given
-        MakeDepositRequest request = new MakeDepositRequest(100, "123456");
+        MakeDepositRequest request = new MakeDepositRequest(BigDecimal.valueOf(100), "123456");
 
         Deposit deposit = new Deposit();
         deposit.setAccountNumber("123456");
-        deposit.setAmount(100);
+        deposit.setAmount(BigDecimal.valueOf(100));
 
-        MakeDepositResponse response = new MakeDepositResponse(100, "123456");
+        MakeDepositResponse response = new MakeDepositResponse(BigDecimal.valueOf(100), "123456");
 
         when(depositMapper.makeDepositRequestToDeposit(request)).thenReturn(deposit);
         when(depositMapper.depositToMakeDepositResponse(deposit)).thenReturn(response);
@@ -53,21 +55,21 @@ class DepositServiceTest {
         // then
         verify(depositMapper).makeDepositRequestToDeposit(request);
         verify(kafkaTemplate).send(eq("deposit-requests"), argThat(event ->
-                event.accountNumber().equals("123456") && event.amount().equals(100)
+                event.accountNumber().equals("123456") && event.amount().equals(BigDecimal.valueOf(100))
         ));
         verify(depositRepository).save(deposit);
         verify(depositMapper).depositToMakeDepositResponse(deposit);
 
         assertNotNull(actualResponse);
         assertEquals("123456", actualResponse.accountNumber());
-        assertEquals(100, actualResponse.amount());
+        assertEquals(BigDecimal.valueOf(100), actualResponse.amount());
     }
 
     @Test
     void requestDeposit_shouldSendKafkaEvent() {
         // given
         String accountNumber = "654321";
-        Integer amount = 500;
+        BigDecimal amount = BigDecimal.valueOf(500);
 
         // when
         depositService.requestDeposit(accountNumber, amount);

@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -24,7 +25,7 @@ public class Deposit {
     private Long id;
 
     @Column(nullable = false)
-    private Integer amount;
+    private BigDecimal amount;
 
     @Column(nullable = false)
     private String accountNumber;
