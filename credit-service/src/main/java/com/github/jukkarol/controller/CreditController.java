@@ -1,10 +1,8 @@
 package com.github.jukkarol.controller;
 
-import com.github.jukkarol.dto.depositDto.request.MakeDepositRequest;
-import com.github.jukkarol.dto.depositDto.response.MakeDepositResponse;
-import com.github.jukkarol.service.CardService;
-import com.github.jukkarol.service.DepositService;
-import com.github.jukkarol.service.WithdrawalService;
+import com.github.jukkarol.dto.creditDto.request.CreateCreditRequest;
+import com.github.jukkarol.dto.creditDto.response.CreateCreditResponse;
+import com.github.jukkarol.service.CreditService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,9 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 @RestController
 @RequestMapping("credit")
-@PreAuthorize("hasRole('ATM')")
+@PreAuthorize("hasRole('Employee')")
 public class CreditController {
-    private final CardService cardService;
+    private final CreditService creditService;
 
     @PostMapping
     @Operation(
@@ -37,7 +35,7 @@ public class CreditController {
                     description = "Deposit finished successfully",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = MakeDepositResponse.class)
+                            schema = @Schema(implementation = CreateCreditResponse.class)
                     )
             ),
             @ApiResponse(
@@ -48,8 +46,8 @@ public class CreditController {
                     )
             ),
     })
-    public ResponseEntity<MakeDepositResponse> makeDeposit(@RequestBody @Valid MakeDepositRequest request) {
-        MakeDepositResponse response = cardService.makeDeposit(request);
+    public ResponseEntity<CreateCreditResponse> makeDeposit(@RequestBody @Valid CreateCreditRequest request) {
+        CreateCreditResponse response = creditService.createCredit(request);
 
         return ResponseEntity.ok(response);
     }

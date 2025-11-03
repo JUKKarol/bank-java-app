@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Server
-public class CardService {
+public class CreditService {
     private final CreditRepository creditRepository;
 
     public CreateCreditResponse createCredit(CreateCreditRequest request)

@@ -25,13 +25,10 @@ public class Credit {
     private Long id;
 
     @Column(nullable = false)
-    private BigDecimal amount;
+    private BigDecimal totalAmount;
 
     @Column(nullable = false)
-    private BigDecimal balanceBeforeTransaction;
-
-    @Column(nullable = false)
-    private BigDecimal balanceAfterTransaction;
+    private BigDecimal monthlyAmount;
 
     @Column(nullable = false)
     private String accountNumber;
