@@ -4,9 +4,13 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record CreateCreditResponse (
-        BigDecimal totalAmount,
+        BigDecimal amountTotal,
 
-        BigDecimal monthlyAmount,
+        BigDecimal amountMonthly,
+
+        int installmentTotal,
+
+        int installmentLeft,
 
         String accountNumber,
 

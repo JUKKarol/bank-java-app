@@ -7,10 +7,10 @@ import java.math.BigDecimal;
 
 public record CreateCreditRequest(
         @NotEmpty
-        BigDecimal totalAmount,
+        BigDecimal amountTotal,
 
         @NotEmpty
-        BigDecimal monthlyAmount,
+        BigDecimal amountMonthly,
 
         @Size(min=10, max=10)
         @NotEmpty
