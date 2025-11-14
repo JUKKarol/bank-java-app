@@ -1,9 +1,7 @@
 package com.github.jukkarol.dto.creditDto.event.request;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 public record CreditRequestEvent(
-        BigDecimal amount,
-
-        String accountNumber
+        List<SingleCreditRequest> creditRequests
 ) { }
