@@ -1,6 +1,7 @@
 package com.github.jukkarol.service;
 
 import com.github.jukkarol.dto.creditDto.event.request.CreditRequestEvent;
+import com.github.jukkarol.dto.creditDto.event.request.SingleCreditRequest;
 import com.github.jukkarol.dto.creditDto.request.CreateCreditRequest;
 import com.github.jukkarol.dto.creditDto.response.CreateCreditResponse;
 import com.github.jukkarol.mapper.CreditHistoryMapper;
@@ -39,16 +40,18 @@ public class CreditService {
     }
 
     @Transactional
-    public void processCreditsInstallments(CreditRequestEvent request)
+    public void processCreditsInstallments()
     {
-        List<CreditHistory> creditHistory = creditHistoryMapper.listSingleCreditRequestToListCreditHistory(request.creditRequests());
+        List<Credit> creditsToDecrement = creditRepository.findAllCreditsToDecrementInstallments();
+
+        List<CreditHistory> creditHistory = creditMapper.creditsToCreditsHistory(creditsToDecrement);
         creditHistoryRepository.saveAll(creditHistory);
 
         int affectedCredits = creditRepository.decrementInstallmentsForAll();
         log.info("Credits affected by installments decrement: {}", affectedCredits);
 
+        List<SingleCreditRequest> creditsDto = creditMapper.creditsToSingleCreditsRequests(creditsToDecrement);
+        CreditRequestEvent request = new CreditRequestEvent(creditsDto);
         kafkaTemplate.send("credit-requests", request);
-
-        //ToDo: add timer to execute credit installment
     }
 }

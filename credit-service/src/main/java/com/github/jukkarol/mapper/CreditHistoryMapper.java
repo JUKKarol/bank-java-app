@@ -8,5 +8,5 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface CreditHistoryMapper {
-    List<CreditHistory> listSingleCreditRequestToListCreditHistory(List<SingleCreditRequest> creditRequests);
+
 }
