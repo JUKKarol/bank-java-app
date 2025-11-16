@@ -4,6 +4,7 @@ import com.github.jukkarol.dto.creditDto.event.request.CreditRequestEvent;
 import com.github.jukkarol.dto.creditDto.event.request.SingleCreditRequest;
 import com.github.jukkarol.dto.creditDto.request.CreateCreditRequest;
 import com.github.jukkarol.dto.creditDto.response.CreateCreditResponse;
+import com.github.jukkarol.exception.NotFoundException;
 import com.github.jukkarol.mapper.CreditHistoryMapper;
 import com.github.jukkarol.mapper.CreditMapper;
 import com.github.jukkarol.model.Credit;
@@ -42,7 +43,8 @@ public class CreditService {
     @Transactional
     public void processCreditsInstallments()
     {
-        List<Credit> creditsToDecrement = creditRepository.findAllCreditsToDecrementInstallments();
+        List<Credit> creditsToDecrement = creditRepository.findAllCreditsToDecrementInstallments()
+                .orElseThrow(() -> new NotFoundException(Credit.class.getSimpleName(), "processCreditsInstallments"));
 
         List<CreditHistory> creditHistory = creditMapper.creditsToCreditsHistory(creditsToDecrement);
         creditHistoryRepository.saveAll(creditHistory);

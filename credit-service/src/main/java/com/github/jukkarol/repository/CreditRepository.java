@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CreditRepository extends JpaRepository<Credit, Long> {
@@ -16,5 +17,5 @@ public interface CreditRepository extends JpaRepository<Credit, Long> {
     int decrementInstallmentsForAll();
 
     @Query("SELECT * FROM Credit WHERE installmentLeft > 0")
-    List<Credit> findAllCreditsToDecrementInstallments();
+    Optional<List<Credit>> findAllCreditsToDecrementInstallments();
 }
