@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class CreditScheduler {
     private final CreditService creditService;
 
-    @Scheduled(cron = "0 0 1 * *")
+    @Scheduled(cron = "${scheduler.credit.decreaseInstallmentsMonthly.cron}")
     public void decreaseInstallmentsMonthly() {
         creditService.processCreditsInstallments();
     }
