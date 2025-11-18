@@ -1,5 +1,7 @@
 package com.github.jukkarol.service;
 
+import com.github.jukkarol.dto.creditDto.event.CreditRequestEvent;
+import com.github.jukkarol.dto.creditDto.event.SingleCreditRequest;
 import com.github.jukkarol.dto.depositDto.event.DepositRequestEvent;
 import com.github.jukkarol.dto.transactionDto.TransactionDisplayDto;
 import com.github.jukkarol.dto.transactionDto.request.GetAccountTransactionsRequest;
@@ -109,6 +111,34 @@ public class TransactionService {
         transaction.setToAccountNumber(event.accountNumber());
 
         transactionRepository.save(transaction);
+    }
+
+    public void processCreditsInstallments(CreditRequestEvent event) {
+        List<String> accountsNumbers = event.creditRequests().stream().map(SingleCreditRequest::accountNumber).toList();
+
+        List<Account> accounts = accountRepository.findAllByAccountNumberIn(accountsNumbers)
+                .orElseThrow(() -> new NotFoundException(Account.class.getSimpleName(), "processCreditsInstallments"));
+
+        for (Account account : accounts) {
+            SingleCreditRequest request = event.creditRequests()
+                    .stream()
+                    .filter(a -> a.accountNumber().equals(account.getAccountNumber()))
+                    .findAny()
+                    .orElseThrow(() -> new NotFoundException(
+                            SingleCreditRequest.class.getSimpleName(), account.getAccountNumber()));
+
+            account.setBalance(account.getBalance().subtract(request.amount()));
+
+            accountRepository.save(account);
+
+            Transaction transaction = new Transaction();
+            transaction.setAmount(request.amount());
+            transaction.setToAccountBalanceAfterTransaction(account.getBalance().add(request.amount()));
+            transaction.setFromAccountNumber("CREDIT");
+            transaction.setToAccountNumber(request.accountNumber());
+
+            transactionRepository.save(transaction);
+        }
     }
 
     @KafkaListener(topics = "withdrawal-requests", groupId = "transaction-service-group")

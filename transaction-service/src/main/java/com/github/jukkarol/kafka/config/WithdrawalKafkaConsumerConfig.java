@@ -47,7 +47,7 @@ public class WithdrawalKafkaConsumerConfig {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, WithdrawalRequestEvent> kafkaListenerContainerFactory() {
+    public ConcurrentKafkaListenerContainerFactory<String, WithdrawalRequestEvent> withdrawalKafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, WithdrawalRequestEvent> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(withdrawalConsumerFactory());
