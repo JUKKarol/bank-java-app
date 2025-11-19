@@ -1,5 +1,5 @@
 # transaction-service/Dockerfile
-FROM openjdk:25-jdk-slim
+FROM amazoncorretto:25-jdk
 VOLUME /tmp
 ARG JAR_FILE=transaction-service/target/*.jar
 COPY ${JAR_FILE} app.jar
