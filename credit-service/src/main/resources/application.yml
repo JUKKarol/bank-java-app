@@ -39,7 +39,7 @@ management:
 scheduler:
   credit:
     decreaseInstallmentsMonthly:
-      cron:  "0 0 1 * *"
+      cron:  "0 0 0 1 * *"
 
 logging:
   level:
