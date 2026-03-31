@@ -1,0 +1,74 @@
+server:
+  port: 9000
+
+url-gateway: http://localhost:8080
+
+auth-service:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/auth-service
+    username: postgres
+    password: P@ssw0rd
+    driver-class-name: org.postgresql.Driver
+  url: http://localhost:8080/auth
+
+transaction-service:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/transaction-service
+    username: postgres
+    password: P@ssw0rd
+    driver-class-name: org.postgresql.Driver
+  url: http://localhost:8080/transaction
+
+atm-service:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/atm-service
+    username: postgres
+    password: P@ssw0rd
+    driver-class-name: org.postgresql.Driver
+  url: http://localhost:8080/atm
+
+spring:
+  kafka:
+    bootstrap-servers: localhost:29092
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+security:
+  jwt:
+    secret-key: yourbase64secretkeyyourbase64secretkeyyourbase64secretkeyyourbase64secretkey
+    expiration-time: 3600000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql: TRACE
+    org.springframework.web: DEBUG
+    org.springframework.transaction: DEBUG
+  
+  file:
+    name: logs/transaction-service.${date:yyyy-MM-dd}.log
+
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  
+  logback:
+    rollingpolicy:
+      max-file-size: 50MB
+      max-history: 30
+      total-size-cap: 2GB
+      file-name-pattern: logs/transaction-service.%d{yyyy-MM-dd}.%i.log
