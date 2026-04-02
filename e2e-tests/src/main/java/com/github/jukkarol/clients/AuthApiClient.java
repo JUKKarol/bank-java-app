@@ -18,11 +18,21 @@ public class AuthApiClient extends BaseApiClient {
         this.myConfig = config;
     }
 
-    public Response login(String username, String password) {
+    public Response login(String email, String password) {
         return given(spec)
-                .body(Map.of("username", username, "password", password))
+                .body(Map.of("email", email, "password", password))
                 .when()
                 .post("/login")
+                .then()
+                .log().ifError()
+                .extract().response();
+    }
+
+    public Response signup(String email, String name, String password) {
+        return given(spec)
+                .body(Map.of("email", email, "name", name, "password", password))
+                .when()
+                .post("/signup")
                 .then()
                 .log().ifError()
                 .extract().response();

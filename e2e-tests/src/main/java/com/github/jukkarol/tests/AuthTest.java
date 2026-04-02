@@ -16,9 +16,12 @@ class AuthTest {
 
     @Test
     void shouldReturnTokenOnValidCredentials() {
-        Response response = authApiClient.login("admin", "password");
+        Response responseSignup = authApiClient.signup("user@gmail.com", "user", "password");
+        assertThat(responseSignup.statusCode()).isIn(200, 409);
 
-        assertThat(response.statusCode()).isEqualTo(200);
-        assertThat(response.jsonPath().getString("token")).isNotBlank();
+        Response responseLogin = authApiClient.login("user@gmail.com", "password");
+
+        assertThat(responseLogin.statusCode()).isEqualTo(200);
+        assertThat(responseLogin.jsonPath().getString("token")).isNotBlank();
     }
 }
