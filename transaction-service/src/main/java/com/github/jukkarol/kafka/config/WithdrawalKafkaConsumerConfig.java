@@ -47,13 +47,13 @@ public class WithdrawalKafkaConsumerConfig {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, WithdrawalRequestEvent> withdrawalKafkaListenerContainerFactory() {
+    public ConcurrentKafkaListenerContainerFactory<String, WithdrawalRequestEvent>
+    withdrawalKafkaListenerContainerFactory(
+            KafkaTemplate<String, Object> kafkaTemplate) {
         ConcurrentKafkaListenerContainerFactory<String, WithdrawalRequestEvent> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(withdrawalConsumerFactory());
-
-        factory.setReplyTemplate(kafkaTemplate());
-
+        factory.setReplyTemplate(kafkaTemplate);
         return factory;
     }
 }

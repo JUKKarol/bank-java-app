@@ -141,7 +141,11 @@ public class TransactionService {
         }
     }
 
-    @KafkaListener(topics = "withdrawal-requests", groupId = "transaction-service-group")
+    @KafkaListener(
+            topics = "withdrawal-requests",
+            groupId = "transaction-service-group",
+            containerFactory = "withdrawalKafkaListenerContainerFactory"
+    )
     @SendTo("withdrawal-responses")
     @Transactional
     public WithdrawalResponseEvent processWithdrawal(WithdrawalRequestEvent event) {
