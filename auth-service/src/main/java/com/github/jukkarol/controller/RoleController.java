@@ -123,7 +123,7 @@ public class RoleController {
                     description = "Permission denied"
             )
     })
-    public ResponseEntity<GetRolesResponse> getRoles(@RequestBody @Valid GetRolesRequest request) {
+    public ResponseEntity<GetRolesResponse> getRoles() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication instanceof JwtAuthenticationToken jwtAuth) {
