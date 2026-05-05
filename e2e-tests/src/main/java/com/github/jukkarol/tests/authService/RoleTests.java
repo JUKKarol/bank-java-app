@@ -1,7 +1,9 @@
 package com.github.jukkarol.tests.authService;
 
-import com.github.jukkarol.clients.AuthApiClient;
-import com.github.jukkarol.helpers.AuthDbHelper;
+import com.github.jukkarol.clients.authService.AuthApiClient;
+import com.github.jukkarol.clients.authService.RoleApiClient;
+import com.github.jukkarol.helpers.authService.RoleDbHelper;
+import com.github.jukkarol.helpers.authService.UserDbHelper;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +16,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 public class RoleTests {
     @Autowired
-    private AuthDbHelper authDbHelper;
+    private RoleDbHelper authDbHelper;
+
+    @Autowired
+    private UserDbHelper userDbHelper;
 
     @Autowired
     private AuthApiClient authApiClient;
+
+    @Autowired
+    private RoleApiClient roleApiClient;
 
     String randomUUIDForUser = UUID.randomUUID().toString().substring(10);
     String emailUser = randomUUIDForUser + "@gmail.com";
@@ -39,15 +47,23 @@ public class RoleTests {
 
         authDbHelper.addRoleToUser(emailAdmin, "ADMIN");
 
-        Response responseLogin = authApiClient.login(emailAdmin, passwordAdmin);
+        Response responseAdminLogin = authApiClient.login(emailAdmin, passwordAdmin);
+        String adminToken = responseAdminLogin.jsonPath().getString("token");
 
-        //add role ATM form admin to user via api
-        //chek is role changed
+        Response responseCreateRole = roleApiClient.createRole(adminToken, emailUser, "ATM");
+        assertThat(responseCreateRole.statusCode()).isEqualTo(201);
 
-        assertThat(responseLogin.statusCode()).isEqualTo(200);
-        assertThat(responseLogin.jsonPath().getString("token")).isNotBlank();
+        Response responseUserLogin = authApiClient.login(emailUser, passwordUser);
+        String userToken = responseUserLogin.jsonPath().getString("token");
+        Response responseGetRoles = roleApiClient.getRolesByToken(userToken);
+        assertThat(responseGetRoles.statusCode()).isEqualTo(200);
+        assertThat(responseGetRoles.jsonPath().getString("token")).isNotBlank();
 
-        //remove users
+        assertThat(responseAdminLogin.statusCode()).isEqualTo(200);
+        assertThat(responseAdminLogin.jsonPath().getString("token")).isNotBlank();
+
+        userDbHelper.removeUser(emailUser);
+        userDbHelper.removeUser(emailAdmin);
     }
 
     @Test

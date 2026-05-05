@@ -1,5 +1,6 @@
-package com.github.jukkarol.clients;
+package com.github.jukkarol.clients.authService;
 
+import com.github.jukkarol.clients.BaseApiClient;
 import com.github.jukkarol.config.TestConfig;
 import io.restassured.response.Response;
 import org.springframework.stereotype.Component;

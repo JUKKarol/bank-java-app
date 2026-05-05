@@ -1,4 +1,4 @@
-package com.github.jukkarol.helpers;
+package com.github.jukkarol.helpers.authService;
 
 import com.github.jukkarol.config.TestConfig;
 import org.springframework.stereotype.Component;
@@ -9,11 +9,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 @Component
-public class AuthDbHelper {
+public class RoleDbHelper {
 
     private final TestConfig config;
 
-    public AuthDbHelper(TestConfig config) {
+    public RoleDbHelper(TestConfig config) {
         this.config = config;
     }
 

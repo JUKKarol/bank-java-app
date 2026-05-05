@@ -1,6 +1,7 @@
 package com.github.jukkarol.tests.authService;
 
-import com.github.jukkarol.clients.AuthApiClient;
+import com.github.jukkarol.clients.authService.AuthApiClient;
+import com.github.jukkarol.helpers.authService.UserDbHelper;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +17,16 @@ class AuthTest {
     @Autowired
     private AuthApiClient authApiClient;
 
+    @Autowired
+    private UserDbHelper userDbHelper;
+
     String randomUUID = UUID.randomUUID().toString().substring(10);
     String email = randomUUID + "@gmail.com";
     String name = randomUUID;
     String password = "password!123";
 
     @Test
-    void shouldReturnTokenOnValidCredentials() {
+    void shouldReturnTokenOnValidCredentials() throws Exception{
         Response responseSignup = authApiClient.signup(email, name, password);
         assertThat(responseSignup.statusCode()).isIn(200);
 
@@ -31,11 +35,11 @@ class AuthTest {
         assertThat(responseLogin.statusCode()).isEqualTo(200);
         assertThat(responseLogin.jsonPath().getString("token")).isNotBlank();
 
-        //remove users
+        userDbHelper.removeUser(email);
     }
 
     @Test
-    void shouldCanNotLoginWithInvalidCredentials() {
+    void shouldCanNotLoginWithInvalidCredentials() throws Exception{
         Response responseSignup = authApiClient.signup(email, name, password);
         assertThat(responseSignup.statusCode()).isIn(200);
 
@@ -43,5 +47,6 @@ class AuthTest {
 
         assertThat(responseLogin.statusCode()).isEqualTo(401);
 
+        userDbHelper.removeUser(email);
     }
 }
