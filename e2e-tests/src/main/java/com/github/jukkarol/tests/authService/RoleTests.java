@@ -57,17 +57,38 @@ public class RoleTests {
         String userToken = responseUserLogin.jsonPath().getString("token");
         Response responseGetRoles = roleApiClient.getRolesByToken(userToken);
         assertThat(responseGetRoles.statusCode()).isEqualTo(200);
-        assertThat(responseGetRoles.jsonPath().getString("token")).isNotBlank();
-
-        assertThat(responseAdminLogin.statusCode()).isEqualTo(200);
-        assertThat(responseAdminLogin.jsonPath().getString("token")).isNotBlank();
+        assertThat(responseGetRoles.jsonPath().getString("roles")).isEqualTo("[ROLE_ATM, ROLE_USER]");
 
         userDbHelper.removeUser(emailUser);
         userDbHelper.removeUser(emailAdmin);
     }
 
     @Test
-    void shouldDeleteUserRole() {
+    void shouldDeleteUserRole() throws Exception{
+        Response responseUserSignup = authApiClient.signup(emailUser, nameUser, passwordUser);
+        assertThat(responseUserSignup.statusCode()).isIn(200);
 
+        Response responseAdminSignup = authApiClient.signup(emailAdmin, nameAdmin, passwordAdmin);
+        assertThat(responseAdminSignup.statusCode()).isIn(200);
+
+        authDbHelper.addRoleToUser(emailAdmin, "ADMIN");
+
+        Response responseAdminLogin = authApiClient.login(emailAdmin, passwordAdmin);
+        String adminToken = responseAdminLogin.jsonPath().getString("token");
+
+        authDbHelper.addRoleToUser(emailUser, "ROLE_ATM");
+
+        Response responseDeleteRole = roleApiClient.deleteRole(adminToken, emailUser, "ROLE_ATM");
+        assertThat(responseDeleteRole.statusCode()).isEqualTo(200);
+        assertThat(responseDeleteRole.jsonPath().getString("roles")).isEqualTo("[ROLE_USER]");
+
+        Response responseUserLogin = authApiClient.login(emailUser, passwordUser);
+        String userToken = responseUserLogin.jsonPath().getString("token");
+        Response responseGetRoles = roleApiClient.getRolesByToken(userToken);
+        assertThat(responseGetRoles.statusCode()).isEqualTo(200);
+        assertThat(responseGetRoles.jsonPath().getString("roles")).isEqualTo("[ROLE_USER]");
+
+        userDbHelper.removeUser(emailUser);
+        userDbHelper.removeUser(emailAdmin);
     }
 }
