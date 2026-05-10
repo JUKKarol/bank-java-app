@@ -5,6 +5,8 @@ import com.github.jukkarol.clients.transactionService.AccountApiClient;
 import com.github.jukkarol.helpers.authService.UserDbHelper;
 import com.github.jukkarol.helpers.transactionService.AccountDbHelper;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,26 +31,34 @@ class AccountTests {
     private AccountApiClient accountApiClient;
 
     String randomUUIDForUser = UUID.randomUUID().toString().substring(10);
-    String emailUser = randomUUIDForUser + "@gmail.com";
-    String nameUser = randomUUIDForUser;
-    String passwordUser = "password!123";
+    String email = randomUUIDForUser + "@gmail.com";
+    String name = randomUUIDForUser;
+    String password = "password!123";
+
+    private String userToken;
+    private String accountNumber;
+    private String balance;
+
+    @BeforeEach
+    void setUp() {
+        authApiClient.signup(email, name, password);
+
+        userToken = authApiClient.login(email, password).jsonPath().getString("token");
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        userDbHelper.removeUser(email);
+        accountDbHelper.removeAccount(accountNumber);
+    }
 
     @Test
     void shouldCreateAccount() throws Exception{
-        //create user
-        Response responseUserSignup = authApiClient.signup(emailUser, nameUser, passwordUser);
-        assertThat(responseUserSignup.statusCode()).isIn(200);
-
-        //get token
-        Response responseUserLogin = authApiClient.login(emailUser, passwordUser);
-        assertThat(responseUserLogin.statusCode()).isIn(200);
-        String userToken = responseUserLogin.jsonPath().getString("token");
-
         //create account
         Response responseCreateAccount = accountApiClient.createAccount(userToken);
         assertThat(responseCreateAccount.statusCode()).isIn(201);
-        String accountNumber = responseCreateAccount.jsonPath().getString("accountNumber");
-        String balance = responseCreateAccount.jsonPath().getString("balance").replace("[", "").replace("]", "");
+        accountNumber = responseCreateAccount.jsonPath().getString("accountNumber");
+        balance = responseCreateAccount.jsonPath().getString("balance").replace("[", "").replace("]", "");
 
         // get all account
         Response responseGetAccounts = accountApiClient.getAllAccounts(userToken);
@@ -64,9 +74,5 @@ class AccountTests {
         assertThat(responseGetAccount.jsonPath().getString("userId")).isNotBlank();
         assertThat(responseGetAccount.jsonPath().getString("createdAt")).isNotBlank();
         assertThat(responseGetAccount.jsonPath().getString("updatedAt")).isNotBlank();
-
-        //delete created user and account
-        userDbHelper.removeUser(emailUser);
-        accountDbHelper.removeAccount(accountNumber);
     }
 }

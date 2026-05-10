@@ -5,10 +5,13 @@ import com.github.jukkarol.clients.authService.RoleApiClient;
 import com.github.jukkarol.helpers.authService.RoleDbHelper;
 import com.github.jukkarol.helpers.authService.UserDbHelper;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,58 +40,48 @@ public class RoleTests {
     String nameAdmin = randomUUIDForAdmin;
     String passwordAdmin = "password!123";
 
-    @Test
-    void shouldAddUserNewRole() throws Exception{
-        Response responseUserSignup = authApiClient.signup(emailUser, nameUser, passwordUser);
-        assertThat(responseUserSignup.statusCode()).isIn(200);
+    String userToken, adminToken;
 
-        Response responseAdminSignup = authApiClient.signup(emailAdmin, nameAdmin, passwordAdmin);
-        assertThat(responseAdminSignup.statusCode()).isIn(200);
+    @BeforeEach
+    void setUp() throws Exception {
+        authApiClient.signup(emailUser, nameUser, passwordUser);
+        authApiClient.signup(emailAdmin, nameAdmin, passwordAdmin);
 
         authDbHelper.addRoleToUser(emailAdmin, "ADMIN");
 
-        Response responseAdminLogin = authApiClient.login(emailAdmin, passwordAdmin);
-        String adminToken = responseAdminLogin.jsonPath().getString("token");
+        userToken = authApiClient.login(emailUser, passwordUser).jsonPath().getString("token");
+        adminToken = authApiClient.login(emailAdmin, passwordAdmin).jsonPath().getString("token");
+    }
 
-        Response responseCreateRole = roleApiClient.createRole(adminToken, emailUser, "ATM");
-        assertThat(responseCreateRole.statusCode()).isEqualTo(201);
-
-        Response responseUserLogin = authApiClient.login(emailUser, passwordUser);
-        String userToken = responseUserLogin.jsonPath().getString("token");
-        Response responseGetRoles = roleApiClient.getRolesByToken(userToken);
-        assertThat(responseGetRoles.statusCode()).isEqualTo(200);
-        assertThat(responseGetRoles.jsonPath().getString("roles")).isEqualTo("[ROLE_ATM, ROLE_USER]");
-
+    @AfterEach
+    void tearDown() throws Exception {
         userDbHelper.removeUser(emailUser);
         userDbHelper.removeUser(emailAdmin);
     }
 
     @Test
+    void shouldAddUserNewRole() throws Exception{
+        Response responseCreateRole = roleApiClient.createRole(adminToken, emailUser, "ATM");
+        assertThat(responseCreateRole.statusCode()).isEqualTo(201);
+
+        Response responseGetRoles = roleApiClient.getRolesByToken(userToken);
+        assertThat(responseGetRoles.statusCode()).isEqualTo(200);
+        assertThat(responseGetRoles.jsonPath().getString("roles")).isEqualTo("[ROLE_ATM, ROLE_USER]");
+    }
+
+    @Test
     void shouldDeleteUserRole() throws Exception{
-        Response responseUserSignup = authApiClient.signup(emailUser, nameUser, passwordUser);
-        assertThat(responseUserSignup.statusCode()).isIn(200);
-
-        Response responseAdminSignup = authApiClient.signup(emailAdmin, nameAdmin, passwordAdmin);
-        assertThat(responseAdminSignup.statusCode()).isIn(200);
-
-        authDbHelper.addRoleToUser(emailAdmin, "ADMIN");
-
-        Response responseAdminLogin = authApiClient.login(emailAdmin, passwordAdmin);
-        String adminToken = responseAdminLogin.jsonPath().getString("token");
-
         authDbHelper.addRoleToUser(emailUser, "ROLE_ATM");
+        userToken = authApiClient.login(emailUser, passwordUser).jsonPath().getString("token");
 
         Response responseDeleteRole = roleApiClient.deleteRole(adminToken, emailUser, "ROLE_ATM");
         assertThat(responseDeleteRole.statusCode()).isEqualTo(200);
         assertThat(responseDeleteRole.jsonPath().getString("roles")).isEqualTo("[ROLE_USER]");
 
-        Response responseUserLogin = authApiClient.login(emailUser, passwordUser);
-        String userToken = responseUserLogin.jsonPath().getString("token");
         Response responseGetRoles = roleApiClient.getRolesByToken(userToken);
         assertThat(responseGetRoles.statusCode()).isEqualTo(200);
         assertThat(responseGetRoles.jsonPath().getString("roles")).isEqualTo("[ROLE_USER]");
-
-        userDbHelper.removeUser(emailUser);
-        userDbHelper.removeUser(emailAdmin);
     }
+
+    //ToDo: add test where user without admin will try to create role
 }

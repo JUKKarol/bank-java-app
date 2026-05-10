@@ -3,6 +3,7 @@ package com.github.jukkarol.tests.authService;
 import com.github.jukkarol.clients.authService.AuthApiClient;
 import com.github.jukkarol.helpers.authService.UserDbHelper;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +26,11 @@ class AuthTests {
     String name = randomUUID;
     String password = "password!123";
 
+    @AfterEach
+    void tearDown() throws Exception {
+        userDbHelper.removeUser(email);
+    }
+
     @Test
     void shouldReturnTokenOnValidCredentials() throws Exception{
         Response responseSignup = authApiClient.signup(email, name, password);
@@ -34,8 +40,6 @@ class AuthTests {
 
         assertThat(responseLogin.statusCode()).isEqualTo(200);
         assertThat(responseLogin.jsonPath().getString("token")).isNotBlank();
-
-        userDbHelper.removeUser(email);
     }
 
     @Test
@@ -46,7 +50,5 @@ class AuthTests {
         Response responseLogin = authApiClient.login(email, password+"1");
 
         assertThat(responseLogin.statusCode()).isEqualTo(401);
-
-        userDbHelper.removeUser(email);
     }
 }
