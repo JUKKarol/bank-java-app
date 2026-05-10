@@ -67,6 +67,52 @@ class TransactionTests {
         Response responseCreateAccount1 = accountApiClient.createAccount(userToken1);
         assertThat(responseCreateAccount1.statusCode()).isIn(201);
         String accountNumber1 = responseCreateAccount1.jsonPath().getString("accountNumber");
+
+        Response responseCreateAccount2 = accountApiClient.createAccount(userToken2);
+        assertThat(responseCreateAccount2.statusCode()).isIn(201);
+        String accountNumber2 = responseCreateAccount2.jsonPath().getString("accountNumber");
+
+        //make transfer
+        Response responseMakeTransfer = transactionApiClient.makeTransfer(userToken1, accountNumber1, accountNumber2, transferAmount);
+        assertThat(responseMakeTransfer.statusCode()).isIn(201);
+        assertThat(responseMakeTransfer.jsonPath().getString("amount")).isEqualTo(transferAmount.toString());
+
+        //get all user transfers
+        Response responseGetTransfers = transactionApiClient.getAccountTransactions(userToken1, accountNumber1);
+        assertThat(responseGetTransfers.statusCode()).isIn(200);
+        assertThat(responseGetTransfers.jsonPath().getString("content.amount")).isEqualTo("[" + transferAmount.toString() + "]");
+        assertThat(responseGetTransfers.jsonPath().getString("content.fromAccountNumber")).isEqualTo("[" + accountNumber1 + "]");
+        assertThat(responseGetTransfers.jsonPath().getString("content.toAccountNumber")).isEqualTo("[" + accountNumber2 + "]");
+
+        //delete created users and accounts
+        userDbHelper.removeUser(emailUser1);
+        userDbHelper.removeUser(emailUser2);
+        accountDbHelper.removeAccount(accountNumber1);
+        accountDbHelper.removeAccount(accountNumber2);
+    }
+
+    @Test
+    void shouldMakeTransferForAccountWithoutOwningIt() throws Exception{
+        //create users
+        Response responseUserSignup1 = authApiClient.signup(emailUser1, nameUser1, passwordUser1);
+        assertThat(responseUserSignup1.statusCode()).isIn(200);
+
+        Response responseUserSignup2 = authApiClient.signup(emailUser2, nameUser2, passwordUser2);
+        assertThat(responseUserSignup2.statusCode()).isIn(200);
+
+        //get tokens
+        Response responseUserLogin1 = authApiClient.login(emailUser1, passwordUser1);
+        assertThat(responseUserLogin1.statusCode()).isIn(200);
+        String userToken1 = responseUserLogin1.jsonPath().getString("token");
+
+        Response responseUserLogin2 = authApiClient.login(emailUser2, passwordUser2);
+        assertThat(responseUserLogin2.statusCode()).isIn(200);
+        String userToken2 = responseUserLogin2.jsonPath().getString("token");
+
+        //create accounts
+        Response responseCreateAccount1 = accountApiClient.createAccount(userToken1);
+        assertThat(responseCreateAccount1.statusCode()).isIn(201);
+        String accountNumber1 = responseCreateAccount1.jsonPath().getString("accountNumber");
         String balance1 = responseCreateAccount1.jsonPath().getString("balance");
 
         Response responseCreateAccount2 = accountApiClient.createAccount(userToken2);
@@ -75,18 +121,64 @@ class TransactionTests {
         String balance2 = responseCreateAccount2.jsonPath().getString("balance");
 
         //make transfer
-        Response responseMakeTransfer = transactionApiClient.makeTransfer(userToken1, accountNumber1, accountNumber2, transferAmount);
-        assertThat(responseMakeTransfer.statusCode()).isIn(201);
-        assertThat(responseMakeTransfer.jsonPath().getString("amount")).isEqualTo(transferAmount.toString());
-        responseMakeTransfer.prettyPrint();
+        Response responseMakeTransfer = transactionApiClient.makeTransfer(userToken1, accountNumber2, accountNumber1, transferAmount);
+        assertThat(responseMakeTransfer.statusCode()).isIn(403);
+        assertThat(responseMakeTransfer.jsonPath().getString("error")).isEqualTo("Permission Denied.");
 
         //get all user transfers
         Response responseGetTransfers = transactionApiClient.getAccountTransactions(userToken1, accountNumber1);
         assertThat(responseGetTransfers.statusCode()).isIn(200);
-        assertThat(responseGetTransfers.jsonPath().getString("content.amount")).isEqualTo("[" + transferAmount.toString() + "]");
-        assertThat(responseGetTransfers.jsonPath().getString("content.fromAccountNumber")).isEqualTo("[" + accountNumber1 + "]");
-        assertThat(responseGetTransfers.jsonPath().getString("content.toAccountNumber")).isEqualTo("[" + accountNumber2 + "]");
-        responseGetTransfers.prettyPrint();
+        assertThat(responseGetTransfers.jsonPath().getString("content.amount")).isEqualTo("[]");
+        assertThat(responseGetTransfers.jsonPath().getString("content.fromAccountNumber")).isEqualTo("[]");
+        assertThat(responseGetTransfers.jsonPath().getString("content.toAccountNumber")).isEqualTo("[]");
+
+        //delete created users and accounts
+        userDbHelper.removeUser(emailUser1);
+        userDbHelper.removeUser(emailUser2);
+        accountDbHelper.removeAccount(accountNumber1);
+        accountDbHelper.removeAccount(accountNumber2);
+    }
+
+    @Test
+    void shouldMakeTransferWithInsufficientFounds() throws Exception{
+        //create users
+        Response responseUserSignup1 = authApiClient.signup(emailUser1, nameUser1, passwordUser1);
+        assertThat(responseUserSignup1.statusCode()).isIn(200);
+
+        Response responseUserSignup2 = authApiClient.signup(emailUser2, nameUser2, passwordUser2);
+        assertThat(responseUserSignup2.statusCode()).isIn(200);
+
+        //get tokens
+        Response responseUserLogin1 = authApiClient.login(emailUser1, passwordUser1);
+        assertThat(responseUserLogin1.statusCode()).isIn(200);
+        String userToken1 = responseUserLogin1.jsonPath().getString("token");
+
+        Response responseUserLogin2 = authApiClient.login(emailUser2, passwordUser2);
+        assertThat(responseUserLogin2.statusCode()).isIn(200);
+        String userToken2 = responseUserLogin2.jsonPath().getString("token");
+
+        //create accounts
+        Response responseCreateAccount1 = accountApiClient.createAccount(userToken1);
+        assertThat(responseCreateAccount1.statusCode()).isIn(201);
+        String accountNumber1 = responseCreateAccount1.jsonPath().getString("accountNumber");
+        String balance1 = responseCreateAccount1.jsonPath().getString("balance");
+
+        Response responseCreateAccount2 = accountApiClient.createAccount(userToken2);
+        assertThat(responseCreateAccount2.statusCode()).isIn(201);
+        String accountNumber2 = responseCreateAccount2.jsonPath().getString("accountNumber");
+        String balance2 = responseCreateAccount2.jsonPath().getString("balance");
+
+        //make transfer
+        Response responseMakeTransfer = transactionApiClient.makeTransfer(userToken1, accountNumber1, accountNumber2, transferAmount.add(new BigDecimal(balance1)));
+        assertThat(responseMakeTransfer.statusCode()).isIn(400);
+        assertThat(responseMakeTransfer.jsonPath().getString("error")).isEqualTo("Not enough funds.");
+
+        //get all user transfers
+        Response responseGetTransfers = transactionApiClient.getAccountTransactions(userToken1, accountNumber1);
+        assertThat(responseGetTransfers.statusCode()).isIn(200);
+        assertThat(responseGetTransfers.jsonPath().getString("content.amount")).isEqualTo("[]");
+        assertThat(responseGetTransfers.jsonPath().getString("content.fromAccountNumber")).isEqualTo("[]");
+        assertThat(responseGetTransfers.jsonPath().getString("content.toAccountNumber")).isEqualTo("[]");
 
         //delete created users and accounts
         userDbHelper.removeUser(emailUser1);
