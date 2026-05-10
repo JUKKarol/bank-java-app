@@ -1,7 +1,7 @@
 package com.github.jukkarol.tests.transactionService;
 
 import com.github.jukkarol.clients.authService.AuthApiClient;
-import com.github.jukkarol.clients.transactionService.TransactionApiClient;
+import com.github.jukkarol.clients.transactionService.AccountApiClient;
 import com.github.jukkarol.helpers.authService.UserDbHelper;
 import com.github.jukkarol.helpers.transactionService.AccountDbHelper;
 import io.restassured.response.Response;
@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,7 +26,7 @@ class AccountTests {
     private AuthApiClient authApiClient;
 
     @Autowired
-    private TransactionApiClient transactionApiClient;
+    private AccountApiClient accountApiClient;
 
     String randomUUIDForUser = UUID.randomUUID().toString().substring(10);
     String emailUser = randomUUIDForUser + "@gmail.com";
@@ -46,19 +45,19 @@ class AccountTests {
         String userToken = responseUserLogin.jsonPath().getString("token");
 
         //create account
-        Response responseCreateAccount = transactionApiClient.createAccount(userToken);
+        Response responseCreateAccount = accountApiClient.createAccount(userToken);
         assertThat(responseCreateAccount.statusCode()).isIn(201);
         String accountNumber = responseCreateAccount.jsonPath().getString("accountNumber");
-        String balance = responseCreateAccount.jsonPath().getString("balance");
+        String balance = responseCreateAccount.jsonPath().getString("balance").replace("[", "").replace("]", "");
 
         // get all account
-        Response responseGetAccounts = transactionApiClient.getAllAccounts(userToken);
+        Response responseGetAccounts = accountApiClient.getAllAccounts(userToken);
         assertThat(responseGetAccounts.statusCode()).isIn(200);
         assertThat(responseGetAccounts.jsonPath().getString("accounts.accountNumber")).isEqualTo("[" + accountNumber + "]");
         assertThat(responseGetAccounts.jsonPath().getString("accounts.balance")).isEqualTo("[" + balance + "]");
 
         // get account
-        Response responseGetAccount = transactionApiClient.getAccount(userToken, accountNumber);
+        Response responseGetAccount = accountApiClient.getAccount(userToken, accountNumber);
         assertThat(responseGetAccount.statusCode()).isIn(200);
         assertThat(responseGetAccount.jsonPath().getString("accountNumber")).isEqualTo(accountNumber);
         assertThat(responseGetAccount.jsonPath().getString("balance")).isEqualTo(balance);

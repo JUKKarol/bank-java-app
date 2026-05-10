@@ -31,7 +31,7 @@ public class AccountService {
 
         Account account = new Account();
         account.setUserId(request.userId());
-        account.setBalance(BigDecimal.valueOf(1000));
+        account.setBalance(BigDecimal.valueOf(1000.00));
         String accountNumber = String.format("%010d", generator.nextLong(1_000_000_0000L));
         account.setAccountNumber(accountNumber);
 
