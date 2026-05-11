@@ -106,7 +106,7 @@ public class TransactionService {
 
         Transaction transaction = new Transaction();
         transaction.setAmount(event.amount());
-        transaction.setToAccountBalanceAfterTransaction(account.getBalance().add(event.amount()));
+        transaction.setToAccountBalanceAfterTransaction(account.getBalance());
         transaction.setFromAccountNumber("ATM");
         transaction.setToAccountNumber(event.accountNumber());
 

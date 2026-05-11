@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class DepositRequestListener {
     private final TransactionService transactionService;
 
-    @KafkaListener(topics = "deposit-requests", groupId = "transaction-group")
+    @KafkaListener(topics = "deposit-requests", groupId = "transaction-group", containerFactory = "depositKafkaListenerContainerFactory")
     public void listen(DepositRequestEvent event) {
         transactionService.makeDeposit(event);
     }

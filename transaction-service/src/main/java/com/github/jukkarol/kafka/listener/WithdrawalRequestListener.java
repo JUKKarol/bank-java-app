@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class WithdrawalRequestListener {
     private final TransactionService transactionService;
 
-    @KafkaListener(topics = "withdrawal-requests", groupId = "transaction-group")
+    @KafkaListener(topics = "withdrawal-requests", groupId = "transaction-group", containerFactory = "withdrawalKafkaListenerContainerFactory")
     public void listen(WithdrawalRequestEvent event) {
         transactionService.processWithdrawal(event);
     }

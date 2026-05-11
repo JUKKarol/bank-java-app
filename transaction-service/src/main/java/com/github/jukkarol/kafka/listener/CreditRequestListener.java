@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class CreditRequestListener {
     private final TransactionService transactionService;
 
-    @KafkaListener(topics = "credit-requests", groupId = "transaction-group")
+    @KafkaListener(topics = "credit-requests", groupId = "transaction-group", containerFactory = "creditKafkaListenerContainerFactory")
     public void listen(CreditRequestEvent event) {
         transactionService.processCreditsInstallments(event);
     }
