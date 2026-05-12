@@ -20,7 +20,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class ATMTests {
+class WithdrawalTests {
 
     @Autowired
     private UserDbHelper userDbHelper;
@@ -57,7 +57,7 @@ class ATMTests {
     private String accountNumber;
     private String balance;
 
-    BigDecimal transferAmount = new BigDecimal("100.11");
+    BigDecimal transferAmount = new BigDecimal("100.12");
 
     @BeforeEach
     void setUp() throws Exception {
@@ -82,23 +82,45 @@ class ATMTests {
     }
 
     @Test
-    void shouldMakeDeposit() throws Exception{
-        //make deposit
-        Response responseMakeDeposit = atmApiClient.makeDeposit(ATMToken, accountNumber, transferAmount);
-        assertThat(responseMakeDeposit.statusCode()).isIn(200);
-        assertThat(responseMakeDeposit.jsonPath().getString("amount")).isEqualTo(transferAmount.toString());
-        assertThat(responseMakeDeposit.jsonPath().getString("accountNumber")).isEqualTo(accountNumber);
-
-        //wait for kafka process
-        Thread.sleep(500);
+    void shouldMakeWithdrawal() throws Exception{
+        //make withdrawal
+        Response responseMakeWithdrawal = atmApiClient.makeWithdrawal(ATMToken, accountNumber, transferAmount);
+        assertThat(responseMakeWithdrawal.statusCode()).isIn(200);
+        assertThat(responseMakeWithdrawal.jsonPath().getString("amount")).isEqualTo(transferAmount.toString());
+        assertThat(responseMakeWithdrawal.jsonPath().getString("accountNumber")).isEqualTo(accountNumber);
 
         //get all user transfers
         Response responseGetTransfers = transactionApiClient.getAccountTransactions(userToken, accountNumber);
         assertThat(responseGetTransfers.statusCode()).isIn(200);
-        responseGetTransfers.prettyPrint();
-        assertThat(responseGetTransfers.jsonPath().getString("content.amount")).isEqualTo("[" + transferAmount.toString() + "]");
+        assertThat(responseGetTransfers.jsonPath().getString("content.amount")).isEqualTo("[-" + transferAmount.toString() + "]");
         assertThat(responseGetTransfers.jsonPath().getString("content.toAccountNumber")).isEqualTo("[" + accountNumber + "]");
         assertThat(responseGetTransfers.jsonPath().getString("content.fromAccountNumber")).isEqualTo("[ATM]");
-        assertThat(responseGetTransfers.jsonPath().getString("content.balanceAfterTransaction")).isEqualTo("[" + transferAmount.add(new BigDecimal(balance)).toString() + "]");
+        assertThat(responseGetTransfers.jsonPath().getString("content.balanceAfterTransaction")).isEqualTo("[" + new BigDecimal(balance).subtract(transferAmount).toString() + "]");
+    }
+
+    @Test
+    void shouldMakeWithdrawalWithInsufficientFounds() throws Exception{
+        //make withdrawal
+        Response responseMakeWithdrawal = atmApiClient.makeWithdrawal(ATMToken, accountNumber, transferAmount.add(new BigDecimal(balance)));
+        assertThat(responseMakeWithdrawal.statusCode()).isIn(400);
+        assertThat(responseMakeWithdrawal.jsonPath().getString("error")).isEqualTo("Insufficient funds for withdrawal");
+
+        //get all user transfers
+        Response responseGetTransfers = transactionApiClient.getAccountTransactions(userToken, accountNumber);
+        assertThat(responseGetTransfers.statusCode()).isIn(200);
+        assertThat(responseGetTransfers.jsonPath().getString("totalElements")).isEqualTo("0");
+    }
+
+    @Test
+    void shouldMakeWithdrawalForZeroAmount() throws Exception{
+        //make withdrawal
+        Response responseMakeWithdrawal = atmApiClient.makeWithdrawal(ATMToken, accountNumber, new BigDecimal(0));
+        assertThat(responseMakeWithdrawal.statusCode()).isIn(400);
+        assertThat(responseMakeWithdrawal.jsonPath().getString("amount")).isEqualTo("must be greater than 0");
+
+        //get all user transfers
+        Response responseGetTransfers = transactionApiClient.getAccountTransactions(userToken, accountNumber);
+        assertThat(responseGetTransfers.statusCode()).isIn(200);
+        assertThat(responseGetTransfers.jsonPath().getString("totalElements")).isEqualTo("0");
     }
 }
