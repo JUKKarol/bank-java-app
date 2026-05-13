@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("credit")
+@RequestMapping("credits")
 @PreAuthorize("hasRole('Employee')")
 public class CreditController {
     private final CreditService creditService;
@@ -46,7 +46,7 @@ public class CreditController {
                     )
             ),
     })
-    public ResponseEntity<CreateCreditResponse> makeDeposit(@RequestBody @Valid CreateCreditRequest request) {
+    public ResponseEntity<CreateCreditResponse> createCredit(@RequestBody @Valid CreateCreditRequest request) {
         CreateCreditResponse response = creditService.createCredit(request);
 
         return ResponseEntity.ok(response);
