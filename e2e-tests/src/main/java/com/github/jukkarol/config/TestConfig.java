@@ -16,6 +16,7 @@ public class TestConfig {
     private Service authService;
     private Service transactionService;
     private Service atmService;
+    private Service creditService;
 
     @Getter
     @Setter

@@ -27,6 +27,14 @@ atm-service:
     driver-class-name: org.postgresql.Driver
   url: http://localhost:8080/atm
 
+credit-service:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/credit-service
+    username: postgres
+    password: P@ssw0rd
+    driver-class-name: org.postgresql.Driver
+  url: http://localhost:8080/credit
+
 spring:
   kafka:
     bootstrap-servers: localhost:29092
