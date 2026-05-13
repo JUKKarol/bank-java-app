@@ -1,6 +1,7 @@
 package com.github.jukkarol.controller;
 
 import com.github.jukkarol.dto.creditDto.request.CreateCreditRequest;
+import com.github.jukkarol.dto.creditDto.request.ProcessSpecifiedCreditsInstallmentsRequest;
 import com.github.jukkarol.dto.creditDto.response.CreateCreditResponse;
 import com.github.jukkarol.service.CreditService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,20 +20,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("credits")
-@PreAuthorize("hasRole('Employee')")
-public class CreditController {
+@RequestMapping("tools")
+@PreAuthorize("hasRole('Admin')")
+public class ToolsController {
     private final CreditService creditService;
 
     @PostMapping
     @Operation(
-            summary = "Create credit",
-            description = "Create credit for account number"
+            summary = "Process installments",
+            description = "Process specified installments by credit id"
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Credit created",
+                    description = "Credits installments processed",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = CreateCreditResponse.class)
@@ -46,9 +47,9 @@ public class CreditController {
                     )
             ),
     })
-    public ResponseEntity<CreateCreditResponse> createCredit(@RequestBody @Valid CreateCreditRequest request) {
-        CreateCreditResponse response = creditService.createCredit(request);
+    public ResponseEntity<Void> processSpecifiedCreditsInstallments(@RequestBody @Valid ProcessSpecifiedCreditsInstallmentsRequest request) {
+        creditService.processSpecifiedCreditsInstallments(request);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok().build();
     }
 }

@@ -37,3 +37,10 @@ spring:
             - Path=/atm/**
           filters:
             - StripPrefix=1
+
+        - id: credit-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/credit/**
+          filters:
+            - StripPrefix=1

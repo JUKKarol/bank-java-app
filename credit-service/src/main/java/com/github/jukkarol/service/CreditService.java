@@ -3,6 +3,7 @@ package com.github.jukkarol.service;
 import com.github.jukkarol.dto.creditDto.event.request.CreditRequestEvent;
 import com.github.jukkarol.dto.creditDto.event.request.SingleCreditRequest;
 import com.github.jukkarol.dto.creditDto.request.CreateCreditRequest;
+import com.github.jukkarol.dto.creditDto.request.ProcessSpecifiedCreditsInstallmentsRequest;
 import com.github.jukkarol.dto.creditDto.response.CreateCreditResponse;
 import com.github.jukkarol.exception.NotFoundException;
 import com.github.jukkarol.mapper.CreditHistoryMapper;
@@ -17,6 +18,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.RoundingMode;
 import java.util.List;
 
 @Slf4j
@@ -35,7 +37,14 @@ public class CreditService {
         //ToDo: check is account number exists
 
         Credit credit = creditMapper.createCreditRequestToCredit(request);
+
+        int Installments = request.amountTotal().divide(request.amountMonthly(), 0, RoundingMode.UP).intValue();
+
+        credit.setInstallmentTotal(Installments);
+        credit.setInstallmentLeft(Installments);
+
         creditRepository.save(credit);
+        log.info("Credit created: {}", credit);
 
         return creditMapper.creditToCreateCreditResponse(credit);
     }
@@ -55,5 +64,22 @@ public class CreditService {
         List<SingleCreditRequest> creditsDto = creditMapper.creditsToSingleCreditsRequests(creditsToDecrement);
         CreditRequestEvent request = new CreditRequestEvent(creditsDto);
         kafkaTemplate.send("credit-requests", request);
+    }
+
+    @Transactional
+    public void processSpecifiedCreditsInstallments(ProcessSpecifiedCreditsInstallmentsRequest request)
+    {
+        List<Credit> creditsToDecrement = creditRepository.findSpecifiedCreditsToDecrementInstallments(request.ids())
+                .orElseThrow(() -> new NotFoundException(Credit.class.getSimpleName(), "processCreditsInstallments"));
+
+        List<CreditHistory> creditHistory = creditMapper.creditsToCreditsHistory(creditsToDecrement);
+        creditHistoryRepository.saveAll(creditHistory);
+
+        int affectedCredits = creditRepository.decrementSpecifiedInstallments(request.ids());
+        log.info("Credits affected by installments decrement: {}", affectedCredits);
+
+        List<SingleCreditRequest> creditsDto = creditMapper.creditsToSingleCreditsRequests(creditsToDecrement);
+        CreditRequestEvent event = new CreditRequestEvent(creditsDto);
+        kafkaTemplate.send("credit-requests", event);
     }
 }

@@ -16,6 +16,13 @@ public interface CreditRepository extends JpaRepository<Credit, Long> {
     @Query("UPDATE Credit c SET c.installmentLeft = c.installmentLeft -1 WHERE c.installmentLeft > 0")
     int decrementInstallmentsForAll();
 
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Credit c SET c.installmentLeft = c.installmentLeft -1 WHERE c.installmentLeft > 0 AND c.id IN :ids")
+    int decrementSpecifiedInstallments(List<Long> ids);
+
     @Query("SELECT c FROM Credit c WHERE c.installmentLeft > 0")
     Optional<List<Credit>> findAllCreditsToDecrementInstallments();
+
+    @Query("SELECT c FROM Credit c WHERE c.installmentLeft > 0 AND c.id IN :ids")
+    Optional<List<Credit>> findSpecifiedCreditsToDecrementInstallments(List<Long> ids);
 }
