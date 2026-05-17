@@ -127,13 +127,14 @@ public class TransactionService {
                     .orElseThrow(() -> new NotFoundException(
                             SingleCreditRequest.class.getSimpleName(), account.getAccountNumber()));
 
-            account.setBalance(account.getBalance().subtract(request.amount()));
+            BigDecimal accountBalance = account.getBalance().subtract(request.amount());
+            account.setBalance(accountBalance);
 
             accountRepository.save(account);
 
             Transaction transaction = new Transaction();
             transaction.setAmount(request.amount());
-            transaction.setToAccountBalanceAfterTransaction(account.getBalance().add(request.amount()));
+            transaction.setToAccountBalanceAfterTransaction(accountBalance);
             transaction.setFromAccountNumber("CREDIT");
             transaction.setToAccountNumber(request.accountNumber());
 

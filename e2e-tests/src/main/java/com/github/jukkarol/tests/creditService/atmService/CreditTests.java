@@ -102,7 +102,6 @@ class CreditTests {
         BigDecimal amountTotal = transferAmount.multiply(new BigDecimal(InstallmentTotal));
         Response responseCreateCredit = creditApiClient.createCredit(employeeToken, accountNumber, amountTotal, transferAmount);
         assertThat(responseCreateCredit.statusCode()).isIn(200);
-        responseCreateCredit.prettyPrint();
 
         List<Long> ids = new ArrayList<>();
         ids.add(responseCreateCredit.jsonPath().getLong("id"));
@@ -116,17 +115,26 @@ class CreditTests {
         //trigger credit iteration
         toolsApiClient.processSpecifiedCreditsInstallments(employeeToken, ids);
 
-        Thread.sleep(3000);
+        //wait for kafka process
+        Thread.sleep(500);
 
         List<Credit> getCreditsAfterTimer = creditDbHelper.getCreditsByAccountNumber(accountNumber);
         assertThat(getCreditsAfterTimer.getFirst().getInstallmentLeft()).isEqualTo(InstallmentTotal - 1);
         assertThat(getCreditsAfterTimer.getFirst().getInstallmentTotal()).isEqualTo(InstallmentTotal);
 
         //check is transaction created
+        Response responseGetTransfers = transactionApiClient.getAccountTransactions(userToken, accountNumber);
+        assertThat(responseGetTransfers.statusCode()).isIn(200);
+        assertThat(responseGetTransfers.jsonPath().getString("content.amount")).isEqualTo("[" + transferAmount.toString() + "]");
+        assertThat(responseGetTransfers.jsonPath().getString("content.balanceAfterTransaction")).isEqualTo("[" + new BigDecimal(balance).subtract(transferAmount)  + "]");
+        assertThat(responseGetTransfers.jsonPath().getString("content.fromAccountNumber")).isEqualTo("[" + "CREDIT" + "]");
+        assertThat(responseGetTransfers.jsonPath().getString("content.toAccountNumber")).isEqualTo("[" + accountNumber + "]");
 
         //delete credit
         creditDbHelper.deleteCreditsByAccountNumber(accountNumber);
     }
+
+    //test where credit will have more than one installment
 
     //test where amountMonthly is greater than amountTotal
 }
