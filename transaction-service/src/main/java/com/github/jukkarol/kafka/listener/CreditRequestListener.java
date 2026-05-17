@@ -1,6 +1,6 @@
 package com.github.jukkarol.kafka.listener;
 
-import com.github.jukkarol.dto.creditDto.event.CreditRequestEvent;
+import com.github.jukkarol.dto.creditDto.event.request.CreditRequestEvent;
 import com.github.jukkarol.service.TransactionService;
 import lombok.AllArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;

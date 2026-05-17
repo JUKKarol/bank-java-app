@@ -1,6 +1,6 @@
 package com.github.jukkarol.kafka.config;
 
-import com.github.jukkarol.dto.creditDto.event.CreditRequestEvent;
+import com.github.jukkarol.dto.creditDto.event.request.CreditRequestEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;

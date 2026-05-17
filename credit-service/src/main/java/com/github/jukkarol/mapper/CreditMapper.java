@@ -4,8 +4,8 @@ import com.github.jukkarol.dto.creditDto.event.request.SingleCreditRequest;
 import com.github.jukkarol.dto.creditDto.request.CreateCreditRequest;
 import com.github.jukkarol.dto.creditDto.response.CreateCreditResponse;
 import com.github.jukkarol.model.Credit;
-import com.github.jukkarol.model.CreditHistory;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.util.List;
 
@@ -13,9 +13,10 @@ import java.util.List;
 public interface CreditMapper {
     Credit createCreditRequestToCredit(CreateCreditRequest request);
 
-    List<CreditHistory> creditsToCreditsHistory(List<Credit> credit);
+    @Mapping(target = "amount", source = "amountMonthly") // ← tu, na single
+    SingleCreditRequest creditToSingleCreditRequest(Credit credit);
 
-    List<SingleCreditRequest> creditsToSingleCreditsRequests(List<Credit> credits);
+    List<SingleCreditRequest> creditsToSingleCreditsRequests(List<Credit> credits); // MapStruct sam użyje metody wyżej
 
     CreateCreditResponse creditToCreateCreditResponse(Credit credit);
 }

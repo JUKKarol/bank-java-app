@@ -1,7 +1,7 @@
 package com.github.jukkarol.service;
 
-import com.github.jukkarol.dto.creditDto.event.CreditRequestEvent;
-import com.github.jukkarol.dto.creditDto.event.SingleCreditRequest;
+import com.github.jukkarol.dto.creditDto.event.request.CreditRequestEvent;
+import com.github.jukkarol.dto.creditDto.event.request.SingleCreditRequest;
 import com.github.jukkarol.dto.depositDto.event.DepositRequestEvent;
 import com.github.jukkarol.dto.transactionDto.TransactionDisplayDto;
 import com.github.jukkarol.dto.transactionDto.request.GetAccountTransactionsRequest;

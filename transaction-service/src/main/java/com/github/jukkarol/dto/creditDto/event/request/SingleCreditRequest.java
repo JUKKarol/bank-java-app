@@ -1,4 +1,4 @@
-package com.github.jukkarol.dto.creditDto.event;
+package com.github.jukkarol.dto.creditDto.event.request;
 
 import java.math.BigDecimal;
 

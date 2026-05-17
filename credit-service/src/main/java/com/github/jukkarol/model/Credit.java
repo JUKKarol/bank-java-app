@@ -7,13 +7,14 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@ToString(exclude = "history")
 
 @Entity
 @Table(name = "credits")
@@ -47,5 +48,5 @@ public class Credit {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "credit", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CreditHistory> history;
+    private Set<CreditHistory> history;
 }

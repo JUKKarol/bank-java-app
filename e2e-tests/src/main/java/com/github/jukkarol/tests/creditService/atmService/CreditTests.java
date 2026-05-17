@@ -3,11 +3,14 @@ package com.github.jukkarol.tests.creditService.atmService;
 import com.github.jukkarol.clients.atmService.ATMApiClient;
 import com.github.jukkarol.clients.authService.AuthApiClient;
 import com.github.jukkarol.clients.creditService.CreditApiClient;
+import com.github.jukkarol.clients.creditService.ToolsApiClient;
 import com.github.jukkarol.clients.transactionService.AccountApiClient;
 import com.github.jukkarol.clients.transactionService.TransactionApiClient;
 import com.github.jukkarol.helpers.authService.RoleDbHelper;
 import com.github.jukkarol.helpers.authService.UserDbHelper;
+import com.github.jukkarol.helpers.creditService.transactionService.CreditDbHelper;
 import com.github.jukkarol.helpers.transactionService.AccountDbHelper;
+import com.github.jukkarol.model.Credit;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,6 +39,9 @@ class CreditTests {
     private AccountDbHelper accountDbHelper;
 
     @Autowired
+    private CreditDbHelper creditDbHelper;
+
+    @Autowired
     private AuthApiClient authApiClient;
 
     @Autowired
@@ -43,6 +52,9 @@ class CreditTests {
 
     @Autowired
     private CreditApiClient creditApiClient;
+
+    @Autowired
+    private ToolsApiClient toolsApiClient;
 
     String randomUUID1 = UUID.randomUUID().toString().substring(10);
     String email= randomUUID1 + "@gmail.com";
@@ -86,21 +98,34 @@ class CreditTests {
     @Test
     void shouldCreateCredit() throws Exception{
         //create credit
-        int InstallmentTotal = 12;
-        BigDecimal amountTotal = transferAmount.multiply(new BigDecimal(12));
+        int InstallmentTotal = 1;
+        BigDecimal amountTotal = transferAmount.multiply(new BigDecimal(InstallmentTotal));
         Response responseCreateCredit = creditApiClient.createCredit(employeeToken, accountNumber, amountTotal, transferAmount);
         assertThat(responseCreateCredit.statusCode()).isIn(200);
         responseCreateCredit.prettyPrint();
+
+        List<Long> ids = new ArrayList<>();
+        ids.add(responseCreateCredit.jsonPath().getLong("id"));
         assertThat(responseCreateCredit.jsonPath().getString("installmentTotal")).isEqualTo(String.valueOf(InstallmentTotal));
         assertThat(responseCreateCredit.jsonPath().getString("installmentLeft")).isEqualTo(String.valueOf(InstallmentTotal));
 
         //check is credit created in db
+        List<Credit> getCreditsBeforeTimer = creditDbHelper.getCreditsByAccountNumber(accountNumber);
+        assertThat((long) getCreditsBeforeTimer.size()).isEqualTo(1);
 
         //trigger credit iteration
+        toolsApiClient.processSpecifiedCreditsInstallments(employeeToken, ids);
+
+        Thread.sleep(3000);
+
+        List<Credit> getCreditsAfterTimer = creditDbHelper.getCreditsByAccountNumber(accountNumber);
+        assertThat(getCreditsAfterTimer.getFirst().getInstallmentLeft()).isEqualTo(InstallmentTotal - 1);
+        assertThat(getCreditsAfterTimer.getFirst().getInstallmentTotal()).isEqualTo(InstallmentTotal);
 
         //check is transaction created
 
         //delete credit
+        creditDbHelper.deleteCreditsByAccountNumber(accountNumber);
     }
 
     //test where amountMonthly is greater than amountTotal
