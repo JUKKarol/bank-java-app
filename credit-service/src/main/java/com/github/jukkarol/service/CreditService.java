@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @AllArgsConstructor
@@ -54,8 +53,18 @@ public class CreditService {
     @Transactional
     public void processCreditsInstallments()
     {
-        List<Credit> creditsToDecrement = creditRepository.findAllCreditsToDecrementInstallments()
-                .orElseThrow(() -> new NotFoundException(Credit.class.getSimpleName(), "processCreditsInstallments"));
+        List<Credit> creditsToDecrement = creditRepository.findAllCreditsToDecrementInstallments();
+
+        if(creditsToDecrement.isEmpty())
+        {
+            throw new NotFoundException(Credit.class.getSimpleName(), "processCreditsInstallments");
+        }
+
+        List<CreditHistory> creditHistories = creditsToDecrement.stream()
+                .map(credit -> creditHistoryMapper.creditToCreditHistory(credit, calculateAmountLeft(credit)))
+                .toList();
+
+        creditHistoryRepository.saveAll(creditHistories);
 
         int affectedCredits = creditRepository.decrementInstallmentsForAll();
         log.info("Credits affected by installments decrement: {}", affectedCredits);
@@ -68,8 +77,12 @@ public class CreditService {
     @Transactional
     public void processSpecifiedCreditsInstallments(ProcessSpecifiedCreditsInstallmentsRequest request)
     {
-        List<Credit> creditsToDecrement = creditRepository.findSpecifiedCreditsToDecrementInstallments(request.ids())
-                .orElseThrow(() -> new NotFoundException(Credit.class.getSimpleName(), "processCreditsInstallments"));
+        List<Credit> creditsToDecrement = creditRepository.findSpecifiedCreditsToDecrementInstallments(request.ids());
+
+        if(creditsToDecrement.isEmpty())
+        {
+            throw new NotFoundException(Credit.class.getSimpleName(), "processCreditsInstallments");
+        }
 
         List<CreditHistory> creditHistories = creditsToDecrement.stream()
                 .map(credit -> creditHistoryMapper.creditToCreditHistory(credit, calculateAmountLeft(credit)))

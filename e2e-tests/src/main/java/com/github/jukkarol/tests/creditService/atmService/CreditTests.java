@@ -93,6 +93,7 @@ class CreditTests {
         userDbHelper.removeUser(email);
         userDbHelper.removeUser(emailEmployee);
         accountDbHelper.removeAccount(accountNumber);
+        creditDbHelper.deleteCreditsByAccountNumber(accountNumber);
     }
 
     @Test
@@ -113,7 +114,8 @@ class CreditTests {
         assertThat((long) getCreditsBeforeTimer.size()).isEqualTo(1);
 
         //trigger credit iteration
-        toolsApiClient.processSpecifiedCreditsInstallments(employeeToken, ids);
+        Response processInstallmentsResponse = toolsApiClient.processSpecifiedCreditsInstallments(employeeToken, ids);
+        assertThat(processInstallmentsResponse.statusCode()).isIn(200);
 
         //wait for kafka process
         Thread.sleep(500);
@@ -130,8 +132,9 @@ class CreditTests {
         assertThat(responseGetTransfers.jsonPath().getString("content.fromAccountNumber")).isEqualTo("[" + "CREDIT" + "]");
         assertThat(responseGetTransfers.jsonPath().getString("content.toAccountNumber")).isEqualTo("[" + accountNumber + "]");
 
-        //delete credit
-        creditDbHelper.deleteCreditsByAccountNumber(accountNumber);
+        //trigger credit iteration
+        Response processInstallmentsResponseAgain = toolsApiClient.processSpecifiedCreditsInstallments(employeeToken, ids);
+        assertThat(processInstallmentsResponseAgain.statusCode()).isIn(404);
     }
 
     //test where credit will have more than one installment
