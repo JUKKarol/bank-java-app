@@ -13,10 +13,10 @@ import java.util.List;
 public interface CreditMapper {
     Credit createCreditRequestToCredit(CreateCreditRequest request);
 
-    @Mapping(target = "amount", source = "amountMonthly") // ← tu, na single
+    @Mapping(target = "amount", source = "amountMonthly")
     SingleCreditRequest creditToSingleCreditRequest(Credit credit);
 
-    List<SingleCreditRequest> creditsToSingleCreditsRequests(List<Credit> credits); // MapStruct sam użyje metody wyżej
+    List<SingleCreditRequest> creditsToSingleCreditsRequests(List<Credit> credits);
 
     CreateCreditResponse creditToCreateCreditResponse(Credit credit);
 }

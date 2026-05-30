@@ -39,10 +39,10 @@ public class CreditService {
 
         Credit credit = creditMapper.createCreditRequestToCredit(request);
 
-        int Installments = request.amountTotal().divide(request.amountMonthly(), 0, RoundingMode.UP).intValue();
+        int installments = request.amountTotal().divide(request.amountMonthly(), 0, RoundingMode.UP).intValue();
 
-        credit.setInstallmentTotal(Installments);
-        credit.setInstallmentLeft(Installments);
+        credit.setInstallmentTotal(installments);
+        credit.setInstallmentLeft(installments);
 
         creditRepository.save(credit);
         log.info("Credit created: {}", credit);
