@@ -103,7 +103,6 @@ class CreditHistoryTests {
         Response responseCreateCredit = creditApiClient.createCredit(employeeToken, accountNumber, amountTotal, transferAmount);
         assertThat(responseCreateCredit.statusCode()).isIn(200);
 
-        //delete to chyba
         List<Long> ids = new ArrayList<>();
         ids.add(responseCreateCredit.jsonPath().getLong("id"));
         assertThat(responseCreateCredit.jsonPath().getString("installmentTotal")).isEqualTo(String.valueOf(InstallmentTotal));
