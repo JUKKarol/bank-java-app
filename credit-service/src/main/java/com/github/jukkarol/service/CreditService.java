@@ -7,7 +7,6 @@ import com.github.jukkarol.dto.creditDto.request.CreateCreditRequest;
 import com.github.jukkarol.dto.creditDto.request.ProcessSpecifiedCreditsInstallmentsRequest;
 import com.github.jukkarol.dto.creditDto.response.CreateCreditResponse;
 import com.github.jukkarol.dto.creditDto.response.GetAccountCreditsResponse;
-import com.github.jukkarol.exception.InsufficientFundsException;
 import com.github.jukkarol.exception.NotFoundException;
 import com.github.jukkarol.mapper.CreditHistoryMapper;
 import com.github.jukkarol.mapper.CreditMapper;
@@ -60,9 +59,9 @@ public class CreditService {
 
     public GetAccountCreditsResponse getAccountCredits(String accountNumber)
     {
-            List<Credit> credits = creditRepository.findAllCreditsByAccountNumber(accountNumber);
+        List<Credit> credits = creditRepository.findAllCreditsByAccountNumber(accountNumber);
 
-            List<CreditDisplayDto> creditsDto = creditMapper.creditsToGetAccountCreditsResponses(credits);
+        List<CreditDisplayDto> creditsDto = creditMapper.creditsToGetAccountCreditsResponses(credits);
 
         return new GetAccountCreditsResponse(creditsDto);
     }
