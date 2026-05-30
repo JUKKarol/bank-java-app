@@ -25,4 +25,6 @@ public interface CreditRepository extends JpaRepository<Credit, Long> {
 
     @Query("SELECT c FROM Credit c WHERE c.installmentLeft > 0 AND c.id IN :ids")
     List<Credit> findSpecifiedCreditsToDecrementInstallments(List<Long> ids);
+
+    List<Credit> findAllCreditsByAccountNumber(String accountNumber);
 }

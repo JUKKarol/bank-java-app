@@ -1,8 +1,10 @@
 package com.github.jukkarol.mapper;
 
+import com.github.jukkarol.dto.creditDto.CreditDisplayDto;
 import com.github.jukkarol.dto.creditDto.event.request.SingleCreditRequest;
 import com.github.jukkarol.dto.creditDto.request.CreateCreditRequest;
 import com.github.jukkarol.dto.creditDto.response.CreateCreditResponse;
+import com.github.jukkarol.dto.creditDto.response.GetAccountCreditsResponse;
 import com.github.jukkarol.model.Credit;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -19,4 +21,6 @@ public interface CreditMapper {
     List<SingleCreditRequest> creditsToSingleCreditsRequests(List<Credit> credits);
 
     CreateCreditResponse creditToCreateCreditResponse(Credit credit);
+
+    List<CreditDisplayDto> creditsToGetAccountCreditsResponses(List<Credit> credits);
 }

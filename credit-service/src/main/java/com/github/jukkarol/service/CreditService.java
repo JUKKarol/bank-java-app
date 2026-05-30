@@ -1,10 +1,12 @@
 package com.github.jukkarol.service;
 
+import com.github.jukkarol.dto.creditDto.CreditDisplayDto;
 import com.github.jukkarol.dto.creditDto.event.request.CreditRequestEvent;
 import com.github.jukkarol.dto.creditDto.event.request.SingleCreditRequest;
 import com.github.jukkarol.dto.creditDto.request.CreateCreditRequest;
 import com.github.jukkarol.dto.creditDto.request.ProcessSpecifiedCreditsInstallmentsRequest;
 import com.github.jukkarol.dto.creditDto.response.CreateCreditResponse;
+import com.github.jukkarol.dto.creditDto.response.GetAccountCreditsResponse;
 import com.github.jukkarol.exception.InsufficientFundsException;
 import com.github.jukkarol.exception.NotFoundException;
 import com.github.jukkarol.mapper.CreditHistoryMapper;
@@ -54,6 +56,15 @@ public class CreditService {
         log.info("Credit created: {}", credit);
 
         return creditMapper.creditToCreateCreditResponse(credit);
+    }
+
+    public GetAccountCreditsResponse getAccountCredits(String accountNumber)
+    {
+            List<Credit> credits = creditRepository.findAllCreditsByAccountNumber(accountNumber);
+
+            List<CreditDisplayDto> creditsDto = creditMapper.creditsToGetAccountCreditsResponses(credits);
+
+        return new GetAccountCreditsResponse(creditsDto);
     }
 
     @Transactional
