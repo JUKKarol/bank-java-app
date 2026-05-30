@@ -97,7 +97,7 @@ class CreditTests {
     }
 
     @Test
-    void shouldCreateCredit() throws Exception{
+    void shouldCreateCreditWithOneInstallment() throws Exception{
         //create credit
         int InstallmentTotal = 1;
         BigDecimal amountTotal = transferAmount.multiply(new BigDecimal(InstallmentTotal));
@@ -137,7 +137,68 @@ class CreditTests {
         assertThat(processInstallmentsResponseAgain.statusCode()).isIn(404);
     }
 
-    //test where credit will have more than one installment
+    @Test
+    void shouldCreateCreditWithThreeInstallment() throws Exception{
+        //create credit
+        int InstallmentTotal = 3;
+        BigDecimal amountTotal = transferAmount.multiply(new BigDecimal(InstallmentTotal));
+        Response responseCreateCredit = creditApiClient.createCredit(employeeToken, accountNumber, amountTotal, transferAmount);
+        assertThat(responseCreateCredit.statusCode()).isIn(200);
 
-    //test where amountMonthly is greater than amountTotal
+        List<Long> ids = new ArrayList<>();
+        ids.add(responseCreateCredit.jsonPath().getLong("id"));
+        assertThat(responseCreateCredit.jsonPath().getString("installmentTotal")).isEqualTo(String.valueOf(InstallmentTotal));
+        assertThat(responseCreateCredit.jsonPath().getString("installmentLeft")).isEqualTo(String.valueOf(InstallmentTotal));
+
+        //check is credit created in db
+        List<Credit> getCreditsBeforeTimer = creditDbHelper.getCreditsByAccountNumber(accountNumber);
+        assertThat((long) getCreditsBeforeTimer.size()).isEqualTo(1);
+
+        //trigger credit iteration
+        Response processInstallmentsResponse = toolsApiClient.processSpecifiedCreditsInstallments(employeeToken, ids);
+        assertThat(processInstallmentsResponse.statusCode()).isIn(200);
+
+        //wait for kafka process
+        Thread.sleep(500);
+
+        List<Credit> getCreditsAfterTimer = creditDbHelper.getCreditsByAccountNumber(accountNumber);
+        assertThat(getCreditsAfterTimer.getFirst().getInstallmentLeft()).isEqualTo(InstallmentTotal - 1);
+        assertThat(getCreditsAfterTimer.getFirst().getInstallmentTotal()).isEqualTo(InstallmentTotal);
+
+        //check is transaction created
+        Response responseGetTransfers = transactionApiClient.getAccountTransactions(userToken, accountNumber);
+        assertThat(responseGetTransfers.statusCode()).isIn(200);
+        assertThat(responseGetTransfers.jsonPath().getString("content.amount")).isEqualTo("[" + transferAmount.toString() + "]");
+        assertThat(responseGetTransfers.jsonPath().getString("content.balanceAfterTransaction")).isEqualTo("[" + new BigDecimal(balance).subtract(transferAmount)  + "]");
+        assertThat(responseGetTransfers.jsonPath().getString("content.fromAccountNumber")).isEqualTo("[" + "CREDIT" + "]");
+        assertThat(responseGetTransfers.jsonPath().getString("content.toAccountNumber")).isEqualTo("[" + accountNumber + "]");
+
+        //trigger credit iteration
+        Response processInstallmentsResponse2 = toolsApiClient.processSpecifiedCreditsInstallments(employeeToken, ids);
+        assertThat(processInstallmentsResponse2.statusCode()).isIn(200);
+
+        Response processInstallmentsResponse3 = toolsApiClient.processSpecifiedCreditsInstallments(employeeToken, ids);
+        assertThat(processInstallmentsResponse3.statusCode()).isIn(200);
+
+        Response processInstallmentsResponse4 = toolsApiClient.processSpecifiedCreditsInstallments(employeeToken, ids);
+        assertThat(processInstallmentsResponse4.statusCode()).isIn(404);
+    }
+
+    @Test
+    void shouldCreateCreditWhereAmountMonthlyIsGreaterThanAmountTotal() throws Exception{
+        //create credit
+        int InstallmentTotal = 1;
+        BigDecimal amountTotal = transferAmount.multiply(new BigDecimal(InstallmentTotal));
+        Response responseCreateCredit = creditApiClient.createCredit(employeeToken, accountNumber, amountTotal, amountTotal.multiply(new BigDecimal(2)));
+        assertThat(responseCreateCredit.statusCode()).isIn(400);
+
+        //check is credit created in db
+        List<Credit> getCreditsBeforeTimer = creditDbHelper.getCreditsByAccountNumber(accountNumber);
+        assertThat((long) getCreditsBeforeTimer.size()).isEqualTo(0);
+
+        //check is transaction created
+        Response responseGetTransfers = transactionApiClient.getAccountTransactions(userToken, accountNumber);
+        assertThat(responseGetTransfers.statusCode()).isIn(200);
+        assertThat(responseGetTransfers.jsonPath().getString("content")).isEqualTo("[]");
+    }
 }

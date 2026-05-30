@@ -1,5 +1,6 @@
 package com.github.jukkarol.exception;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -65,6 +66,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InsufficientFundsException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleInsufficientFunds(InsufficientFundsException ex) {
+        return Map.of("error", ex.getMessage());
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleBadRequest(BadRequestException ex) {
         return Map.of("error", ex.getMessage());
     }
 

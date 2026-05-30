@@ -5,6 +5,7 @@ import com.github.jukkarol.dto.creditDto.event.request.SingleCreditRequest;
 import com.github.jukkarol.dto.creditDto.request.CreateCreditRequest;
 import com.github.jukkarol.dto.creditDto.request.ProcessSpecifiedCreditsInstallmentsRequest;
 import com.github.jukkarol.dto.creditDto.response.CreateCreditResponse;
+import com.github.jukkarol.exception.InsufficientFundsException;
 import com.github.jukkarol.exception.NotFoundException;
 import com.github.jukkarol.mapper.CreditHistoryMapper;
 import com.github.jukkarol.mapper.CreditMapper;
@@ -14,6 +15,7 @@ import com.github.jukkarol.repository.CreditHistoryRepository;
 import com.github.jukkarol.repository.CreditRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +35,12 @@ public class CreditService {
     private final KafkaTemplate<String, CreditRequestEvent> kafkaTemplate;
 
     @Transactional
-    public CreateCreditResponse createCredit(CreateCreditRequest request)
-    {
+    public CreateCreditResponse createCredit(CreateCreditRequest request) throws BadRequestException {
+        if (request.amountMonthly().compareTo(request.amountTotal()) > 0)
+        {
+            throw new BadRequestException("amountTotal should be greater than amountMonthly");
+        }
+
         //ToDo: check is account number exists
 
         Credit credit = creditMapper.createCreditRequestToCredit(request);

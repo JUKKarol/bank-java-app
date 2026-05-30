@@ -12,6 +12,7 @@ import com.github.jukkarol.model.CreditHistory;
 import com.github.jukkarol.repository.CreditHistoryRepository;
 import com.github.jukkarol.repository.CreditRepository;
 import com.github.jukkarol.service.CreditService;
+import org.apache.coyote.BadRequestException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -49,7 +50,7 @@ class CreditServiceTest {
     private CreditService creditService;
 
     @Test
-    void shouldCreateCreditAndProcessInstallments() {
+    void shouldCreateCreditAndProcessInstallments() throws BadRequestException {
         // given
         CreateCreditRequest request = new CreateCreditRequest(
                 new BigDecimal("1000"),

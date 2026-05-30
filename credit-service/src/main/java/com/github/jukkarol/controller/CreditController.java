@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,7 +47,7 @@ public class CreditController {
                     )
             ),
     })
-    public ResponseEntity<CreateCreditResponse> createCredit(@RequestBody @Valid CreateCreditRequest request) {
+    public ResponseEntity<CreateCreditResponse> createCredit(@RequestBody @Valid CreateCreditRequest request) throws BadRequestException {
         CreateCreditResponse response = creditService.createCredit(request);
 
         return ResponseEntity.ok(response);
