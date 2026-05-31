@@ -221,7 +221,11 @@ mvn spring-boot:run
 cd atm-service
 mvn spring-boot:run
 
-# Terminal 4 - API Gateway
+# Terminal 4 - Credit Service
+cd credit-service
+mvn spring-boot:run
+
+# Terminal 5 - API Gateway
 cd api-gateway
 mvn spring-boot:run
 ```
