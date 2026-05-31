@@ -7,11 +7,11 @@ import com.github.jukkarol.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -47,7 +47,7 @@ public class POSTLoginTest {
     void shouldReturn200WhenLoginIsSuccessful() throws Exception {
         LoginUserRequest loginRequest = new LoginUserRequest("test@example.com", "password123");
 
-        mockMvc.perform(post("/auth//login")
+        mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isOk())
@@ -59,7 +59,7 @@ public class POSTLoginTest {
     void shouldReturn401WhenCredentialsAreInvalid() throws Exception {
         LoginUserRequest loginRequest = new LoginUserRequest("test@example.com", "wrongpassword");
 
-        mockMvc.perform(post("/auth//login")
+        mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isUnauthorized());
