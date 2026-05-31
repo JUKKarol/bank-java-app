@@ -324,9 +324,3 @@ docker compose build --no-cache
 - [Spring Cloud Gateway](https://spring.io/projects/spring-cloud-gateway)
 - [Apache Kafka Documentation](https://kafka.apache.org/documentation/)
 - [PostgreSQL Documentation](https://www.postgresql.org/docs/)
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
