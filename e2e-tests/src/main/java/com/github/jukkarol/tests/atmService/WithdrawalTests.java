@@ -89,6 +89,9 @@ class WithdrawalTests {
         assertThat(responseMakeWithdrawal.jsonPath().getString("amount")).isEqualTo(transferAmount.toString());
         assertThat(responseMakeWithdrawal.jsonPath().getString("accountNumber")).isEqualTo(accountNumber);
 
+        //wait for kafka process
+        Thread.sleep(500);
+
         //get all user transfers
         Response responseGetTransfers = transactionApiClient.getAccountTransactions(userToken, accountNumber);
         assertThat(responseGetTransfers.statusCode()).isIn(200);
@@ -105,6 +108,9 @@ class WithdrawalTests {
         assertThat(responseMakeWithdrawal.statusCode()).isIn(400);
         assertThat(responseMakeWithdrawal.jsonPath().getString("error")).isEqualTo("Insufficient funds for withdrawal");
 
+        //wait for kafka process
+        Thread.sleep(500);
+
         //get all user transfers
         Response responseGetTransfers = transactionApiClient.getAccountTransactions(userToken, accountNumber);
         assertThat(responseGetTransfers.statusCode()).isIn(200);
@@ -117,6 +123,9 @@ class WithdrawalTests {
         Response responseMakeWithdrawal = atmApiClient.makeWithdrawal(ATMToken, accountNumber, new BigDecimal(0));
         assertThat(responseMakeWithdrawal.statusCode()).isIn(400);
         assertThat(responseMakeWithdrawal.jsonPath().getString("amount")).isEqualTo("must be greater than 0");
+
+        //wait for kafka process
+        Thread.sleep(500);
 
         //get all user transfers
         Response responseGetTransfers = transactionApiClient.getAccountTransactions(userToken, accountNumber);

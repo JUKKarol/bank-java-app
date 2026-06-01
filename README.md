@@ -1,4 +1,4 @@
-# Bank Java App
+# 🏦 Bank Java App
 
 A **microservice banking** built with modern **Java 25** & **Spring Boot 4.0**. It showcases authentication, account transactions, credits and ATM cash operations, wired together with Kafka and fronted by a Spring Cloud **API Gateway**.
 
@@ -8,7 +8,7 @@ This banking application follows a microservices architecture pattern with:
 - **API Gateway** as the single entry point for all client requests
 - **Auth Service** for user authentication and JWT token management
 - **Transaction Service** for account management and money transfers
-- **Credit Service** for cash deposits and withdrawals
+- **Credit Service** for loan and credit management
 - **ATM Service** for cash deposits and withdrawals
 - **Kafka** for asynchronous inter-service communication
 - **PostgreSQL** databases (one per service) for data persistence
@@ -68,6 +68,7 @@ bank-java-app/
 | **Credit Service** | `credit-service` | 8084 | `/credit/**` | Credits |
 
 Each microservice exposes its own OpenAPI documentation at `<service-host>/swagger-ui.html`. 
+Example:
 
 http://localhost:8081/swagger-ui/index.html
 
@@ -109,11 +110,11 @@ docker compose down
 ### Health Check Endpoints
 
 Verify services are running:
-- Gateway: [http://localhost:8080/actuator/health](http://localhost:8080/actuator/health)
-- Auth: [http://localhost:8081/actuator/health](http://localhost:8081/actuator/health)
-- Transaction: [http://localhost:8082/actuator/health](http://localhost:8082/actuator/health)
-- ATM: [http://localhost:8083/actuator/health](http://localhost:8083/actuator/health)
-- Credit: [http://localhost:8084/actuator/health](http://localhost:8084/actuator/health)
+- Gateway: GET [http://localhost:8080/actuator/health](http://localhost:8080/actuator/health)
+- Auth: GET [http://localhost:8081/actuator/health](http://localhost:8081/actuator/health)
+- Transaction: GET [http://localhost:8082/actuator/health](http://localhost:8082/actuator/health)
+- ATM: GET [http://localhost:8083/actuator/health](http://localhost:8083/actuator/health)
+- Credit: GET [http://localhost:8084/actuator/health](http://localhost:8084/actuator/health)
 
 ### Infrastructure Endpoints
 - Kafka broker: `localhost:9092`
@@ -159,7 +160,7 @@ This creates demo users with predefined credentials for testing purposes.
 - `POST /atm/withdrawals` - Make a cash withdrawal
 
 ### Credit Service
-- `POST /credit/tools` - Process specified installments by credit id (test env only)
+- `POST /credits/tools` - Process specified installments by credit id (test env only)
 - `POST /credits` - Create credit for account number
 - `GET /credits/{accountNumber}` - Get credits for account number
 - `GET /credits/history/{creditId}` - Get credits history for credit
@@ -190,6 +191,19 @@ The project includes:
 - Unit tests for services and mappers
 - Integration tests for controllers
 - MockMvc tests for REST endpoints
+
+## 🔄 End-to-End Tests
+
+The project includes end-to-end tests that verify complete business workflows across multiple microservices.
+
+### Covered Scenarios
+- User registration and authentication
+- Account creation
+- Cash deposits via ATM Service
+- Money transfers between accounts
+- Credit creation and repayment
+- JWT-protected access through API Gateway
+- Kafka event processing between services
 
 ---
 

@@ -90,7 +90,7 @@ class DepositTests {
         assertThat(responseMakeDeposit.jsonPath().getString("accountNumber")).isEqualTo(accountNumber);
 
         //wait for kafka process
-        //Thread.sleep(500);
+        Thread.sleep(500);
 
         //get all user transfers
         Response responseGetTransfers = transactionApiClient.getAccountTransactions(userToken, accountNumber);
